@@ -1,13 +1,18 @@
 import React from "react";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 
+import Login from "./pages/Login";
 
 
 function App() {
   return (
+    <Router>
     <div>
-      test
+      <Switch>
+        <Route exact path="/" component ={Login}/>
+      </Switch>
     </div>
-
+    </Router>
   );
 }
 
