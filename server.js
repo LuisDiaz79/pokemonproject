@@ -15,8 +15,13 @@ if (process.env.NODE_ENV === "production") {
 // Add routes, both API and view
 app.use(routes);
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/pokemon");
+mongoose.Promise = require('bluebird');
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/pokemon", { promiseLibrary: require('bluebird') })
+  .then(() =>  console.log('MONGO connection succesful'))
+  .catch((err) => console.error(err));
+
+// Start the API server
 app.listen(PORT, function() {
   console.log("App listening on PORT " + PORT);
 });
-// Start the API server
+
