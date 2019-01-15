@@ -12,7 +12,15 @@ class Create extends Component {
       name: '',
       gender: '',
       username: '',
-      password: ''
+      password: '',
+
+      male :{
+        id : "M"    
+      },
+
+      female :{
+        id : "F"    
+      }
     };
   }
   
@@ -48,6 +56,11 @@ class Create extends Component {
     this.setState({gender : g});
 
   }
+
+  selectCharacter = ()=>{
+    
+  }
+
   render() {
     const { username, password, name } = this.state;
     return (
@@ -77,7 +90,7 @@ class Create extends Component {
                 </FormGroup>
                 <FormGroup>
                   <Col sm={12} md={6}>
-                    <CharacterIMG gender="M"/>
+                    <CharacterIMG gender="M" selected={this.selectCharacter}/>
                   </Col>
                   <Col sm={12} md={6}>
                     <CharacterIMG gender="F"/>

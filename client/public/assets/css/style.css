@@ -1,7 +1,7 @@
 *{
   box-sizing: border-box;
   /* text-align: center; */
-  outline: 1px dotted red;
+  /* outline: 1px dotted red; */
 }
 
 body {
@@ -87,4 +87,14 @@ body {
 }
 .form-signin p {
   margin-top: 10px;
+}
+
+.imgSelected{
+  background-color: RED;
+
+}
+
+.imgNoSelected{
+  background-color: GREEN;
+
 }
