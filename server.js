@@ -2,6 +2,7 @@ const express = require("express");
 
 const mongoose = require("mongoose");
 const routes = require("./routes");
+const auth = require('./routes/api/auth');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -15,8 +16,12 @@ if (process.env.NODE_ENV === "production") {
 // Add routes, both API and view
 app.use(routes);
 
+//Auth
+app.use('/api/auth', auth);
+
+
 mongoose.Promise = require('bluebird');
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/pokemon", { promiseLibrary: require('bluebird') })
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/pokemonproject", { promiseLibrary: require('bluebird') })
   .then(() =>  console.log('MONGO connection succesful'))
   .catch((err) => console.error(err));
 

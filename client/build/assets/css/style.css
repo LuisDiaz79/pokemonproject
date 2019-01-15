@@ -1,0 +1,26 @@
+*{
+  box-sizing: border-box;
+  /* text-align: center; */
+  /* outline: 1px dotted red;  */
+}
+
+
+
+.modal-content{
+  background-color: #101A1B;
+  color: #A8A390;
+  padding: 20px;
+  border-radius: 15px;
+  margin: 25% auto;
+  box-shadow: 4px 4px 4px green;
+}
+
+.modal-title{
+  color: #A8A390;
+  font-family: 'Special Elite', cursive;
+  font-size: 35px;
+  text-shadow: 1px 1px 2px green;
+}
+.close{
+  color: WHITE;
+}
