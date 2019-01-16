@@ -51,7 +51,7 @@ class Login extends Component {
         <Form className="form-signin" onSubmit={this.onSubmit}>
           <h2 className="form-signin-heading">Please sign in</h2>
           {message !== '' &&
-            <div class="alert alert-warning alert-dismissible" role="alert">
+            <div className="alert alert-warning alert-dismissible" role="alert">
               {message}
             </div>
           }
@@ -74,7 +74,7 @@ class Login extends Component {
           </FormGroup>
 
           <p>
-            Not a member? <Link to="/register"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Register here</Link>
+            Not a member? <Link to="/register"><span className="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Register here</Link>
           </p>
         </Form>
         </Col>
