@@ -1,10 +1,17 @@
 import React from "react";
 
-export function CharacterIMG({ gender, selected }) {
-  return (
-    <div>
-      <img src={`./assets/images/${gender}.jpg`} alt={gender} className={`hvr-grow char-selected ${selected ===0 ? 'imgNoSelected' : 'imgSelected'}`}/>
-    </div>
-  );
+class CharacterIMG extends React.Component{
+	constructor(props){
+		super();
+	}
+	
+	render(){
+		return(
+			<div>
+			  <img src={`./assets/images/${gender}.jpg`} alt={props.gender} className={this.props.chosen} onClick={this.props.toggleChosen(props.gender)} />
+			</div>
+		);
+	}
 }
 
+export default CharacterIMG;
