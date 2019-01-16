@@ -90,11 +90,10 @@ body {
 }
 
 .imgSelected{
-  background-color: RED;
-
+  border: 8px solid RED;
 }
 
 .imgNoSelected{
-  background-color: GREEN;
+  border: none;
 
 }

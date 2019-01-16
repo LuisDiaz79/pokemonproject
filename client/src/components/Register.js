@@ -10,17 +10,11 @@ class Create extends Component {
     super();
     this.state = {
       name: '',
-      gender: '',
+      chosenGender: '',
       username: '',
       password: '',
-
-      male :{
-        id : "M"    
-      },
-
-      female :{
-        id : "F"    
-      }
+	  chosen: `hvr-grow`
+	}
     };
   }
   
@@ -57,6 +51,20 @@ class Create extends Component {
 
   }
 
+  toggleChosen = (gender) => {
+		if(this.state.chosen === 'hvr-grow'){
+			this.setState({
+				chosen: `hvr-grow imgSelected`,
+				chosenGender: gender
+			});
+		}else{
+			this.setState({
+				chosen: `hvr-grow`,
+				chosenGender: gender
+			});
+		}		
+	}
+  
   selectCharacter = ()=>{
     
   }
@@ -90,10 +98,10 @@ class Create extends Component {
                 </FormGroup>
                 <FormGroup>
                   <Col sm={12} md={6}>
-                    <CharacterIMG gender="M" selected={this.selectCharacter}/>
+                    <CharacterIMG gender="M" toggleChosen={this.toggleChosen} chosen={this.state.chosen}/>
                   </Col>
                   <Col sm={12} md={6}>
-                    <CharacterIMG gender="F"/>
+                    <CharacterIMG gender="F" toggleChosen={this.toggleChosen} chosen={this.state.chosen} />
                   </Col>
                 </FormGroup>
                 <FormGroup>
