@@ -6,6 +6,7 @@ var express = require('express');
 var jwt = require('jsonwebtoken');
 var router = express.Router();
 var User = require("../../models/User");
+const playerController = require("../../controllers/playerController");
 
 
 //Create router for signup or register the new user.
@@ -24,7 +25,20 @@ router.post('/register', function (req, res) {
             if (err) {
                 return res.json({ success: false, msg: 'Username already exists.' });
             }
-            res.json({ success: true, msg: 'Successful created new user.' });
+            let newPlayer = {
+                name : req.body.name,
+                email : req.body.username,
+                gender : req.body.chosenGender,
+                level : 1,
+                exptonextlvl: 100,
+                actualexp: 0,
+                pokemonAPIID : 0
+
+            }
+            console.log(`NEW PLAYER ${JSON.stringify(newPlayer)}`);
+            req.body = newPlayer;
+            playerController.create(req, res);
+            // res.json({ success: true, msg: 'Successful created new user.' });
         });
     }
 });
@@ -42,12 +56,21 @@ router.post('/login', function (req, res) {
             res.status(401).send({ success: false, msg: 'Authentication failed. User not found.' });
         } else {
             // check if password matches
+            
             user.comparePassword(req.body.password, function (err, isMatch) {
                 if (isMatch && !err) {
                     // if user is found and password is right create a token
                     var token = jwt.sign(user.toJSON(), settings.secret);
                     // return the information including token as JSON
-                    res.json({ success: true, token: 'JWT ' + token });
+
+                    // let loggedUser = playerController.findById(user.username);
+                    
+                    // if(loggedUser){
+                        res.json({ success: true, token: 'JWT ' + token, username :  user.username});
+                    // }else{
+                    //     res.status(404).send({ success: false, msg: 'Authentication failed. User not found.' });
+                    // }
+                    
                 } else {
                     res.status(401).send({ success: false, msg: 'Authentication failed. Wrong password.' });
                 }

@@ -29,12 +29,18 @@ class Login extends Component {
     axios.post('/api/auth/login', { username, password })
       .then((result) => {
         localStorage.setItem('jwtToken', result.data.token);
+        
         this.setState({ message: '' });
         this.props.history.push('/game')
       })
       .catch((error) => {
+        
         if (error.response.status === 401) {
-          this.setState({ message: 'Login failed. Username or password not match' });
+          this.setState({ message: error.response.data.msg });
+        }else if (error) {
+          
+          this.setState({ message: error.response.data.msg});
+          this.props.history.push('/register')
         }
       });
   }

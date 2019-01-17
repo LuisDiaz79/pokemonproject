@@ -46,7 +46,7 @@ body {
 
 .char-selected{
   max-width: 250px;
-  padding: 10px;
+  padding: 15px;
 }
 
 .form-signin {
@@ -93,7 +93,3 @@ body {
   border: 8px solid RED;
 }
 
-.imgNoSelected{
-  border: none;
-
-}

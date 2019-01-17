@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { CharacterIMG } from "./CharacterIMG";
+import CharacterIMG from "./CharacterIMG";
 import { Container } from "./Grid";
 import { Button, Form, FormGroup, Row, Col, FormControl } from 'react-bootstrap';
 
-class Create extends Component {
+class Register extends Component {
 
   constructor() {
     super();
@@ -13,8 +13,7 @@ class Create extends Component {
       chosenGender: '',
       username: '',
       password: '',
-	  chosen: `hvr-grow`
-	}
+  	  chosenStyle: `imgNoSelected`
     };
   }
   
@@ -27,15 +26,18 @@ class Create extends Component {
   onSubmit = (e) => {
     e.preventDefault();
 
-    const { username, password , name} = this.state;
+    const { username, password , name, chosenGender} = this.state;
 
     console.log(`username : ${username}`);
 
     console.log(`password : ${password}`);
-    console.log(`password : ${name}`);
+    console.log(`name : ${name}`);
+    console.log(`chosenGender : ${chosenGender}`);
 
-    axios.post('/api/auth/register', { username, password })
+
+    axios.post('/api/auth/register', { username, password , name, chosenGender})
       .then((result) => {
+        
         console.log(result);
         this.props.history.push("/login")
       });
@@ -45,29 +47,22 @@ class Create extends Component {
     this.props.history.push('/login')
   }
 
-  addChar = (g) =>{
-    console.log(g);
-    this.setState({gender : g});
-
-  }
-
   toggleChosen = (gender) => {
+    this.setState({chosenGender: gender});
+    
 		if(this.state.chosen === 'hvr-grow'){
 			this.setState({
-				chosen: `hvr-grow imgSelected`,
-				chosenGender: gender
+				chosenStyle: ``,
 			});
 		}else{
 			this.setState({
-				chosen: `hvr-grow`,
-				chosenGender: gender
+				chosenStyle: 'imgSelected',
+				
 			});
-		}		
+    }
+    console.log(this.state.chosenGender);		
 	}
   
-  selectCharacter = ()=>{
-    
-  }
 
   render() {
     const { username, password, name } = this.state;
@@ -98,10 +93,10 @@ class Create extends Component {
                 </FormGroup>
                 <FormGroup>
                   <Col sm={12} md={6}>
-                    <CharacterIMG gender="M" toggleChosen={this.toggleChosen} chosen={this.state.chosen}/>
+                    <CharacterIMG gender="M" chosen={`hvr-grow char-selected ${(this.state.chosenGender === "M") ? this.state.chosenStyle : ""}`}  toggleChosen={this.toggleChosen}/>
                   </Col>
                   <Col sm={12} md={6}>
-                    <CharacterIMG gender="F" toggleChosen={this.toggleChosen} chosen={this.state.chosen} />
+                    <CharacterIMG gender="F" chosen={`hvr-grow char-selected ${(this.state.chosenGender === "F") ? this.state.chosenStyle : ""}`} toggleChosen={this.toggleChosen}/>
                   </Col>
                 </FormGroup>
                 <FormGroup>
@@ -121,5 +116,4 @@ class Create extends Component {
     );
   }
 }
-
-export default Create;
+export default Register;

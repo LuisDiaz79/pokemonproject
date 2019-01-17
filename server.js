@@ -22,8 +22,10 @@ app.use('/api/auth', auth);
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/pokemonproject", { promiseLibrary: require('bluebird') })
-  .then(() =>  console.log('MONGO connection succesful'))
-  .catch((err) => console.error(err));
+  .then(() =>  {
+    console.log('MONGO connection succesful')
+    //add pokemo
+  }).catch((err) => console.error(err));
 
 // Start the API server
 app.listen(PORT, function() {
