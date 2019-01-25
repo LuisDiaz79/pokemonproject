@@ -11,17 +11,26 @@ export class GameContainer extends React.Component {
     }
 
     render() {
-        const {oponentPokemon, playerPokemon, player} = this.props;
+        const {opponentPokemon, playerPokemon, player} = this.props;
+        console.log(this.props);
         return (
             <div className="game">
-                { (!oponentPokemon || oponentPokemon.pokemonName ==="") ? console.log('out') : (
-                    <div className="opponent">
-                        <StatsContainer pokemonName={oponentPokemon.pokemonName} lvl={oponentPokemon.level}/>
-                        <img className="pokemon" src={oponentPokemon.pokemonImg} alt="A sprite of charizard" />
+                { 
+                    (!opponentPokemon || opponentPokemon.pokemonName ==="") ? console.log('out') : (
+                        <div className="opponent">
+                            <StatsContainer pokemonName={opponentPokemon.pokemonName} lvl={opponentPokemon.level}/>
+                            <img className="pokemon" src={opponentPokemon.pokemonImg} alt="A sprite of charizard" />
+                        </div>
+                    )
+                }
+                {
+                    (
+                        !playerPokemon || playerPokemon.pokemonName ==="") ? console.log('out') : (
+                        <div className="player">
+                            <StatsContainer pokemonName={playerPokemon.name} lvl={player.level}/>
+                        <img className="pokemon" src={playerPokemon.imageURL} alt="Player Pokemon" />
                     </div>
-                    
-                )
-        
+                    )
                 }
             </div>
         )

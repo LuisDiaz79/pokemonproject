@@ -61,23 +61,34 @@ class Game extends Component {
     let {player, playerPokemon, opponentPokemon} = this.state;
     return (
       <div>
-        {
-          (player ==="" && opponentPokemon)  ? console.log("OUT") : (
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div className="container-fluid">
+            <div className="navbar-header">
+              <a className="navbar-brand" href="#">
+                <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive"/>
+              </a>  
+                        
+            </div>
             
-            <GameContainer opponentPokemon={opponentPokemon} player={player} playerPokemon={playerPokemon}/>
-           )
-        }
+            <div className="navbar-text navbar-right">
+              <a href="#" className="navbar-link">Luisaur</a>
+              <h3 className="panel-title navbar-right">
+                {
+                  localStorage.getItem('jwtToken') &&
+                  <button className="btn btn-primary" onClick={this.logout}>Logout</button>
+                }
+                
+              </h3> 
+            </div>            
+          </div>          
+        </nav>
           
-          <h3 className="panel-title">
-            {
-              localStorage.getItem('jwtToken') &&
-              <button className="btn btn-primary" onClick={this.logout}>Logout</button>
-            }
-          </h3>
-
+        <div className="container">
+          <GameContainer opponentPokemon={opponentPokemon} player={player} playerPokemon={playerPokemon}/>
+        </div>
       </div>
-    );
-  }
-}
-
+        );
+      }
+    }
+    
 export default Game;

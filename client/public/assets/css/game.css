@@ -1,7 +1,16 @@
 body {
   font-family: monospace;
   font-size: 20px;
+  background-image: url('/assets/images/bg2.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  
+  overflow-y: hidden;
 }
+/* .container game-play{
+  margin: 5px auto;
+} */
 
 .game {
   position: relative;
@@ -12,7 +21,7 @@ body {
   border-radius: 8px 8px 0 0;
   height: 480px;
   width: 800px;
-  margin: 15px auto;
+  margin: 0px auto;
 }
 
 .opponent {
@@ -61,7 +70,7 @@ body {
   border-radius: 0 0 8px 8px;
   color: #fff;
   height: 120px;
-  width: 784px;
+  width: 800px;
   margin: 0px auto;
 }
 
@@ -172,5 +181,16 @@ body {
 
 .stats .name {
   font-weight: bold;
+}
+
+.img-responsive {
+    height: auto;
+    width: auto;
+    max-height: 35px;
+    max-width: 125px;
+}
+.panel-title{
+  margin-right:20px;
+  margin-left: 10px;
 }
 
