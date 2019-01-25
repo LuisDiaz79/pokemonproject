@@ -4,38 +4,25 @@ export class GameContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            pokemonName: ""
+            oponentPokemon:{},
+            playerPokemon:{},
+            player: ""
         }
     }
-    render() {
-        const {oponentPokemon, playerPokemon} = this.props;
-        return (
-            <div>
-                <div className="game">
-                    <div className="opponent">
-                        <StatsContainer name={oponentPokemon.name} />
-                        <img className="pokemon" src="http://img.pokemondb.net/sprites/black-white/anim/normal/charizard.gif" alt="A sprite of charizard" />
-                    </div>
-                    <div className="player">
-                        <StatsContainer name={playerPokemon.name} />
-                        <img className="pokemon" src="http://bit.ly/blastoisegif" alt="A gif from blastoises back sprite" />
-                    </div>
-                </div>
 
-                <div className="box">
-                    <div id="message" className="message">
-                        What should {"BLASTOIDE"} do?
+    render() {
+        const {oponentPokemon, playerPokemon, player} = this.props;
+        return (
+            <div className="game">
+                { (!oponentPokemon || oponentPokemon.pokemonName ==="") ? console.log('out') : (
+                    <div className="opponent">
+                        <StatsContainer pokemonName={oponentPokemon.pokemonName} lvl={oponentPokemon.level}/>
+                        <img className="pokemon" src={oponentPokemon.pokemonImg} alt="A sprite of charizard" />
                     </div>
-                    <div className="actions">
-                        <button onClick="waterCannon()">Water Cannon</button>
-                        <button onClick="waterPulse()">Water Pulse</button>
-                        <button onClick="surf()">Surf</button>
-                        <button onClick="tackle()">Tackle</button>
-                    </div>
-                    <div className="continue">
-                        <button onClick="compPokemon()">Continue</button>
-                    </div>
-                </div>
+                    
+                )
+        
+                }
             </div>
         )
     }
@@ -52,8 +39,12 @@ export class StatsContainer extends React.Component {
     }
 
     render() {
+        let {pokemonName, lvl} = this.props;
         return (
             <div>
+            {
+                (!this.props.pokemonName || this.props.pokemonName ==="")?"OUT" : (
+                    
                 <div className="stats">
                     <div className="top">
                         <PokeballContainer hp={this.state.hp} />
@@ -62,13 +53,16 @@ export class StatsContainer extends React.Component {
                         </div>
                     </div>
                     <span className="name">
-                        {this.props.name}
+                        {` ${pokemonName} `}
                     </span>
                     <span className="level">
-                        {this.state.lvl}
+                        {` ${lvl}`}
                     </span>
                 </div>
+                )
+            }
             </div>
+            
         )
     }
 }
@@ -86,7 +80,7 @@ export class PokeballContainer extends React.Component {
     showPokeballs = () => {
         let table = []
         for (let i = 0; i < this.state.pokeballs; i++) {
-            table.push(<Pokeball />)
+            table.push( <div key={i} className="pokeball"></div>)
         }
         return table;
     }
@@ -98,7 +92,4 @@ export class PokeballContainer extends React.Component {
             </div>
         )
     }
-}
-export function Pokeball() {
-    return <div className="pokeball"></div>;
 }

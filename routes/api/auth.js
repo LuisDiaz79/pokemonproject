@@ -1,12 +1,20 @@
-var mongoose = require('mongoose');
 var passport = require('passport');
+var json = require('circular-json');
 var settings = require('../../config/settings');
 require('../../config/passport')(passport);
 var express = require('express');
 var jwt = require('jsonwebtoken');
 var router = express.Router();
 var User = require("../../models/User");
+var Player = require("../../models/player");
 const playerController = require("../../controllers/playerController");
+const pokemonController = require("../../controllers/pokemonController");
+
+const asyncHandler = (promise) => {
+    return promise
+        .then(response => [null, response])
+        .catch(err => [err, null]);
+}
 
 
 //Create router for signup or register the new user.
@@ -21,24 +29,22 @@ router.post('/register', function (req, res) {
             password: req.body.password
         });
         // save the user
-        newUser.save(function (err) {
+        newUser.save(async function (err) {
             if (err) {
                 return res.json({ success: false, msg: 'Username already exists.' });
             }
             let newPlayer = {
-                name : req.body.name,
-                email : req.body.username,
-                gender : req.body.chosenGender,
-                level : 1,
+                name: req.body.name,
+                email: req.body.username,
+                gender: req.body.chosenGender,
+                level: 1,
                 exptonextlvl: 100,
                 actualexp: 0,
-                pokemonAPIID : 0
+                pokemonAPIID: req.body.chosenPokemon
 
             }
-            console.log(`NEW PLAYER ${JSON.stringify(newPlayer)}`);
             req.body = newPlayer;
             playerController.create(req, res);
-            // res.json({ success: true, msg: 'Successful created new user.' });
         });
     }
 });
@@ -56,21 +62,34 @@ router.post('/login', function (req, res) {
             res.status(401).send({ success: false, msg: 'Authentication failed. User not found.' });
         } else {
             // check if password matches
-            
-            user.comparePassword(req.body.password, function (err, isMatch) {
+
+            user.comparePassword(req.body.password, async (err, isMatch) => {
                 if (isMatch && !err) {
                     // if user is found and password is right create a token
                     var token = jwt.sign(user.toJSON(), settings.secret);
                     // return the information including token as JSON
 
-                    // let loggedUser = playerController.findById(user.username);
-                    
-                    // if(loggedUser){
-                        res.json({ success: true, token: 'JWT ' + token, username :  user.username});
-                    // }else{
-                    //     res.status(404).send({ success: false, msg: 'Authentication failed. User not found.' });
-                    // }
-                    
+
+                    const [error, userInfo] = await asyncHandler(Player.find({ email: user.username }));
+
+                    if (!error) {
+                        console.log(userInfo[0].pokemonAPIID);
+                        req.body.pokemonId = userInfo[0].pokemonAPIID;
+                        // console.log(req);
+                        pokemonController.findPokemonAPI(req, res)
+                            .then((result) => {
+                                res.json({
+                                    success: true,
+                                    token: 'JWT ' + token,
+                                    userInfo: userInfo,
+                                    myPokemon: result.pokemon
+                                });
+                            }).catch(err => err);
+
+                    } else {
+                        res.status(404).send({ success: false, msg: 'Authentication failed. User not found.' });
+                    }
+
                 } else {
                     res.status(401).send({ success: false, msg: 'Authentication failed. Wrong password.' });
                 }
@@ -78,6 +97,7 @@ router.post('/login', function (req, res) {
         }
     });
 });
+
 
 //Export the router variable as a module.
 

@@ -8,7 +8,7 @@ require('../../config/passport')(passport);
 router.route("/")
   .get(passport.authenticate('jwt', { session: false}), function(req, res){
     var token = getToken(req.headers);
-    console.log(`PLAYER GET ${token}`);
+    console.log(`PLAYER GET`);
     if(token){
       playersController.findAll(req, res);
     }else {

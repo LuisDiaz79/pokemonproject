@@ -8,23 +8,41 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      oponentPokemon: {
-        name : "CHARMANDER"
-      },
-      playerPokemon: {
-        name : "BLASTOIDE"
-      }
+      opponentPokemon: {},
+      playerPokemon: {},
+      player : ""
     };
   }
 
 
   componentDidMount() {
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-    console.log(`LOCALSTORAGE : ${localStorage.getItem('jwtToken')}`);
-    axios.get('/api/players')
+    // console.log(`LOCALSTORAGE : ${localStorage.getItem('jwtToken')}`);
+    // console.log(`USER : ${JSON.stringify(this.props.location.state.user)}`);
+    // console.log(`POKEMON : ${JSON.stringify(this.props.location.state.playerPokemon)}`);
+    if(!this.props.location.state){
+      this.props.history.push("/login");
+      return false;
+    }
+    this.setState({player: this.props.location.state.user, playerPokemon : this.props.location.state.playerPokemon});
+
+    axios.post('/api/pokemons/opponent')
       .then(res => {
-        this.setState({ pokemons: res.data });
-        console.log(this.state.pokemons);
+        console.log(res)
+        let difficulty = (Math.floor(Math.random() * 5))-2; 
+        let opponentLVL = this.state.player.level + difficulty
+        if(opponentLVL<=0) opponentLVL=1;
+        let opponentHP = opponentLVL * 150;
+        let opponent = {
+          pokemonName : res.data.opponent.name,
+          level : opponentLVL,
+          hp : opponentHP,
+          pokemonImg : res.data.opponent.animatedURL, 
+          moves: this.props.location.state.pokeMoves
+        }
+        this.setState({ opponentPokemon: opponent});
+        console.log(this.state.opponentPokemon);
+
       })
       .catch((error) => {
         console.log(error);
@@ -40,20 +58,24 @@ class Game extends Component {
   }
 
   render() {
+    let {player, playerPokemon, opponentPokemon} = this.state;
     return (
-      <div className="container">
-        <GameContainer oponentPokemon={this.state.oponentPokemon} playerPokemon={this.state.playerPokemon}/>
-
-
-      <h3 className="panel-title">
+      <div>
         {
-          localStorage.getItem('jwtToken') &&
-          <button className="btn btn-primary" onClick={this.logout}>Logout</button>
+          (player ==="" && opponentPokemon)  ? console.log("OUT") : (
+            
+            <GameContainer opponentPokemon={opponentPokemon} player={player} playerPokemon={playerPokemon}/>
+           )
         }
-      </h3>
+          
+          <h3 className="panel-title">
+            {
+              localStorage.getItem('jwtToken') &&
+              <button className="btn btn-primary" onClick={this.logout}>Logout</button>
+            }
+          </h3>
 
-
-      </div >
+      </div>
     );
   }
 }

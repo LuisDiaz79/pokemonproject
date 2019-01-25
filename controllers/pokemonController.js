@@ -1,5 +1,24 @@
+var axios = require("axios");
 const db = require("../models");
 
+let findPokemonByAPI = function (pokemonId){
+  console.log("Pokemon findPokemonByAPI");
+  return axios.get("https://pokeapi.co/api/v2/pokemon/"+pokemonId)
+    .then( response => response.data)
+    .catch(err => err);
+};
+
+let findMoves = function (pokemonOBJ){
+  
+  let pokeMoves = [];
+  let apiMoves =  pokemonOBJ.moves;
+  
+  for(let i=0; i<4 ; i++){
+    let movesRdm = Math.floor(Math.random() * parseInt(apiMoves.length)); 
+    pokeMoves.push(apiMoves[movesRdm].move.name);            
+  }
+  return pokeMoves;
+}
 // Defining methods for the PokemonsController
 module.exports = {
   findAll: function(req, res) {
@@ -7,10 +26,7 @@ module.exports = {
     db.Pokemon
       .find(req.query)
       .sort({ date: -1 })
-      .then(dbModel => {
-        console.log(dbModel);
-        res.json(dbModel)
-      })
+      .then(dbModel =>res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   findById: function(req, res) {
@@ -20,6 +36,39 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
+  findPokemonAPI : function (req, res){
+    console.log("Pokemon findPokemonByAPI");
+
+    return new Promise((resolve, reject) => {
+      findPokemonByAPI(req.body.pokemonId)
+          .then(data =>{
+            pokeMoves = findMoves(data);
+            let pokemon = data;
+            pokemon.pokeMoves = pokeMoves;
+            resolve({pokemon : pokemon});
+          }).catch(err => reject(res.status(422).json(err)));
+    });
+
+    
+  },
+  findOpponnet : function (req, res){
+    console.log("Pokemon findOponnet");
+    db.Pokemon
+      .find()
+      .then(async dbModel => {
+        let pokNum = Math.floor(Math.random() * dbModel.length); 
+        let opponent =  dbModel[pokNum];
+        let pokeMoves =[];
+
+        findPokemonByAPI(opponent.apiId)
+          .then(data =>{
+            pokeMoves = findMoves(data);
+            //console.log(pokeMoves);
+            return res.json({opponent : opponent, pokeMoves: pokeMoves});
+          }).catch(err => res.status(422).json(err));
+      }).catch(err => res.status(422).json(err));
+  },
+ 
   create: function(req, res) {
     console.log("Pokemon create");
     db.Pokemon
@@ -42,4 +91,5 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   }
+  
 };

@@ -1,7 +1,7 @@
 *{
   box-sizing: border-box;
   /* text-align: center; */
-  /* outline: 1px dotted red; */
+  outline: 1px dotted red;
 }
 
 body {
@@ -45,13 +45,13 @@ body {
 }
 
 .char-selected{
-  max-width: 250px;
+  max-width: 200px;
   padding: 15px;
 }
 
 .form-signin {
   color: WHITE;
-  max-width: 450px;
+  max-width: 550px;
   margin: 5% 15%;
 }
 .form-style{
@@ -93,3 +93,6 @@ body {
   border: 8px solid RED;
 }
 
+.userImg{
+  max-width: 80px;
+}

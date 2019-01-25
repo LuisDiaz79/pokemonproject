@@ -6,11 +6,8 @@ module.exports = {
     console.log("Player findAll");
     db.Player
       .find(req.query)
-      .sort({ date: -1 })
-      .then(dbModel => {
-        console.log(dbModel);
-        res.json(dbModel)
-      })
+      .sort({ level: -1 })
+      .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   findById: function(id) {

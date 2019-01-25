@@ -5,6 +5,22 @@ const pokemonSchema = new Schema({
   name: { 
     type: String, 
     required: true 
+  },
+  apiId: { 
+    type: Number, 
+    required: true 
+  },
+  imageURL: { 
+    type: String, 
+    required: true 
+  },
+  backImageURL: { 
+    type: String, 
+    required: false 
+  },
+  animatedURL: { 
+    type: String, 
+    required: true 
   }
 });
 

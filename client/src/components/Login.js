@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom';
 
-import { Container } from "./Grid";
-import { Button, Form, FormGroup, Row, Col, FormControl } from 'react-bootstrap';
+import { Container, Row, Col } from "./Grid";
 
 class Login extends Component {
 
@@ -12,7 +12,8 @@ class Login extends Component {
     this.state = {
       username: '',
       password: '',
-      message: ''
+      message: '',
+      userInfo: ''
     };
   }
   onChange = (e) => {
@@ -20,6 +21,7 @@ class Login extends Component {
     state[e.target.name] = e.target.value;
     this.setState(state);
   }
+
 
   onSubmit = (e) => {
     e.preventDefault();
@@ -29,9 +31,11 @@ class Login extends Component {
     axios.post('/api/auth/login', { username, password })
       .then((result) => {
         localStorage.setItem('jwtToken', result.data.token);
-        
-        this.setState({ message: '' });
-        this.props.history.push('/game')
+
+        console.log(result.data);
+
+        this.setState({ message: '', userInfo: result.data.userInfo[0], myPokemon : result.data.myPokemon});
+
       })
       .catch((error) => {
         
@@ -46,6 +50,18 @@ class Login extends Component {
   }
 
   render() {
+
+    if (this.state.userInfo) {
+      return   <Redirect to={{
+        pathname: "/dashboard",
+        state: { 
+          userInfo: this.state.userInfo,
+          myPokemon : this.state.myPokemon
+        }
+      }}/>
+
+    }
+
     const { username, password, message } = this.state;
     return (
       <div className="login">
@@ -53,39 +69,30 @@ class Login extends Component {
       
       <Container fluid>
         <Row>
-        <Col sm={12} md={6}>
-        <Form className="form-signin" onSubmit={this.onSubmit}>
+        <Col size="sm-12 md-6">
+
+        <form className="form-signin" onSubmit={this.onSubmit}>
           <h2 className="form-signin-heading">Please sign in</h2>
-          {message !== '' &&
-            <div className="alert alert-warning alert-dismissible" role="alert">
-              {message}
-            </div>
-          }
-          <FormGroup controlId="formHorizontalEmail">
-            <Col sm={12} className="form-style">
-              <FormControl type="text" placeholder="Email" className="sr-only" name="username" value={username} onChange={this.onChange} required />
-            </Col>
-          </FormGroup>
-          <br></br>
-          <FormGroup controlId="formHorizontalPassword">
-            <Col sm={12}  className="form-style">
-              <FormControl type="password" placeholder="Password" className="sr-only" name="password" value={password} onChange={this.onChange} required />
-            </Col>
-          </FormGroup>
-
-          <FormGroup>
-            <Col sm={12} className="form-style">
-              <Button bsStyle="primary" bsSize="large" type="submit" block>Sign in</Button>
-            </Col>
-          </FormGroup>
-
+            {message !== '' &&
+              <div className="alert alert-warning alert-dismissible" role="alert">
+                {message}
+              </div>
+            }
+          <div className="form-group">
+            <input type="email" className="form-control" placeholder="Enter email" name="username" value={username} onChange={this.onChange}/>
+          </div>
+          <div className="form-group">
+            <input type="password" className="form-control" placeholder="Password" name="password"  value={password} onChange={this.onChange} />
+          </div>
+          <button type="submit" className="btn btn-primary btn-lg btn-block">Submit</button>
           <p>
             Not a member? <Link to="/register"><span className="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Register here</Link>
           </p>
-        </Form>
+        </form>
+
         </Col>
-        <Col sm={12} md={6}>
-          test
+        <Col size="sm-12 md-6">
+          
         </Col>
         </Row>
       </Container>

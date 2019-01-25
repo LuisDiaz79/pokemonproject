@@ -1,4 +1,4 @@
-let pokemon = [
+[
   {
     apiId:65 ,
     name:"Alakazam",
@@ -144,21 +144,9 @@ let pokemon = [
     animatedURL:"https://img.pokemondb.net/sprites/black-white/anim/normal/snorlax.gif"
   }, 
   {
-    apiId: ,
-    name:"",
-    imageURL:"/assets/images/pokemon/darumaka.png",
-    animatedURL:""
-  },
-/   /
-Squirtle/ 7 /https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif
-
-
-  
-  {
-    apiId: ,
-    name:"",
-    imageURL:"",
+    apiId: 7,
+    name:"Squirtle",
+    imageURL:"https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif",
     animatedURL:""
   }
 ]
-export pokemon;

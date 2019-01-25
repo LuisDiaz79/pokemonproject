@@ -1,22 +1,35 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import CharacterIMG from "./CharacterIMG";
-import { Container } from "./Grid";
-import { Button, Form, FormGroup, Row, Col, FormControl } from 'react-bootstrap';
+import NewPokeIMG from "./NewPokeIMG";
+import { Container, Row, Col } from "./Grid";
 
 class Register extends Component {
 
   constructor() {
     super();
     this.state = {
+      message: '',
       name: '',
       chosenGender: '',
+      chosenPokemon: '',
       username: '',
       password: '',
-  	  chosenStyle: `imgNoSelected`
+      initialPokemons: [],
+      chosenStyle: `imgNoSelected`,
+      pokeChosenStyle: `imgNoSelected`,
     };
   }
-  
+
+  componentDidMount() {
+    axios.post('/api/pokemons/init')
+      .then((result) => {
+        console.log(`RESULT: ${JSON.stringify(result.data.pokemons)}`);
+        this.setState({ initialPokemons: result.data.pokemons });
+      })
+      .catch(err => console.log(err));
+  }
+
   onChange = (e) => {
     const state = this.state
     state[e.target.name] = e.target.value;
@@ -26,18 +39,10 @@ class Register extends Component {
   onSubmit = (e) => {
     e.preventDefault();
 
-    const { username, password , name, chosenGender} = this.state;
-
-    console.log(`username : ${username}`);
-
-    console.log(`password : ${password}`);
-    console.log(`name : ${name}`);
-    console.log(`chosenGender : ${chosenGender}`);
-
-
-    axios.post('/api/auth/register', { username, password , name, chosenGender})
+    const { username, password, name, chosenGender, chosenPokemon } = this.state;
+    axios.post('/api/auth/register', { username, password, name, chosenGender, chosenPokemon })
       .then((result) => {
-        
+
         console.log(result);
         this.props.history.push("/login")
       });
@@ -48,67 +53,108 @@ class Register extends Component {
   }
 
   toggleChosen = (gender) => {
-    this.setState({chosenGender: gender});
-    
-		if(this.state.chosen === 'hvr-grow'){
-			this.setState({
-				chosenStyle: ``,
-			});
-		}else{
-			this.setState({
-				chosenStyle: 'imgSelected',
-				
-			});
+    this.setState({ chosenGender: gender });
+
+    if (this.state.chosen === 'hvr-grow') {
+      this.setState({
+        chosenStyle: ``,
+      });
+    } else {
+      this.setState({
+        chosenStyle: 'imgSelected',
+
+      });
     }
-    console.log(this.state.chosenGender);		
-	}
-  
+    console.log(this.state.chosenGender);
+  }
+
+  pokeToggleChosen = (pokemonId) => {
+    this.setState({ chosenPokemon: pokemonId });
+
+    if (this.state.pokeChosen === 'hvr-grow') {
+      this.setState({
+        pokeChosenStyle: ``,
+      });
+    } else {
+      this.setState({
+        pokeChosenStyle: 'imgSelected',
+
+      });
+    }
+  }
+
 
   render() {
-    const { username, password, name } = this.state;
+    const { message, username, password, name } = this.state;
     return (
       <div className="login">
         <Container fluid>
           <Row>
-            <Col bsStyle="align-top" sm={12} md={6}>
-              <Form className="form-signin" onSubmit={this.onSubmit}>
-                <h2 className="form-signin-heading">Register</h2>
+            <Col size="sm-12 md-6">
 
-                <FormGroup controlId="formHorizontalName">
-                  <Col sm={12} className="form-style">
-                    <FormControl type="text" placeholder="Name" className="sr-only" name="name" value={name} onChange={this.onChange} required />
+            <form className="form-signin" onSubmit={this.onSubmit}>
+              <h2 className="form-signin-heading">Register</h2>
+              {message !== '' &&
+                <div className="alert alert-warning alert-dismissible" role="alert">
+                  {message}
+                </div>
+              }
+              <div className="form-group">
+                <input type="text" className="form-control" placeholder="Name" name="name"  value={name} onChange={this.onChange} />
+              </div>
+              <div className="form-group">
+                <input type="email" className="form-control" placeholder="Enter email" name="username" value={username} onChange={this.onChange}/>
+              </div>
+              <div className="form-group">
+                <input type="password" className="form-control" placeholder="Password" name="password"  value={password} onChange={this.onChange} />
+              </div>
+              <div className="form-group">
+                <Row>
+                  <Col size="sm-12 md-6">
+                    <CharacterIMG gender="M"
+                      chosen={`hvr-grow char-selected ${(this.state.chosenGender === "M") ? this.state.chosenStyle : ""}`}
+                      toggleChosen={this.toggleChosen} />
                   </Col>
-                </FormGroup>
-
-                <FormGroup controlId="formHorizontalEmail">
-                  <Col sm={12} className="form-style">
-                    <FormControl type="text" placeholder="Email" className="sr-only" name="username" value={username} onChange={this.onChange} required />
+                  <Col size="sm-12 md-6">
+                    <CharacterIMG gender="F" chosen={`hvr-grow char-selected ${(this.state.chosenGender === "F") ? this.state.chosenStyle : ""}`} toggleChosen={this.toggleChosen} />
                   </Col>
-                </FormGroup>
-                <br></br>
-                <FormGroup controlId="formHorizontalPassword">
-                  <Col sm={12} className="form-style">
-                    <FormControl type="password" placeholder="Password" className="sr-only" name="password" value={password} onChange={this.onChange} required />
+                </Row>
+              </div>
+              {this.state.initialPokemons.length === 0 ? "" : (
+                <div className="form-group">
+                <Row>
+                  <Col size="sm-12 md-4">
+                      <NewPokeIMG imageSRC={this.state.initialPokemons[0].imageURL}
+                        pokeId={this.state.initialPokemons[0].apiId}
+                        pokeChosen={`hvr-grow char-selected ${(this.state.chosenPokemon === 1) ? this.state.pokeChosenStyle : ""}`}
+                        pokeToggleChosen={this.pokeToggleChosen} />
+                    </Col>
+                    <Col size="sm-12 md-4">
+                      <NewPokeIMG imageSRC={this.state.initialPokemons[1].imageURL}
+                        pokeId={this.state.initialPokemons[1].apiId}
+                        pokeChosen={`hvr-grow char-selected ${(this.state.chosenPokemon === 4) ? this.state.pokeChosenStyle : ""}`}
+                        pokeToggleChosen={this.pokeToggleChosen} />
+                    </Col>
+                    <Col size="sm-12 md-4">
+                      <NewPokeIMG imageSRC={this.state.initialPokemons[2].imageURL}
+                        pokeId={this.state.initialPokemons[2].apiId}
+                        pokeChosen={`hvr-grow char-selected ${(this.state.chosenPokemon === 7) ? this.state.pokeChosenStyle : ""}`}
+                        pokeToggleChosen={this.pokeToggleChosen} />
+                    </Col>
+                  </Row>
+                </div>
+              )}
+              <div className="form-group">
+                <Row>
+                  <Col size="sm-12 md-6">
+                    <button type="submit" className="btn btn-primary btn-lg btn-block" onClick={this.Cancel} >Cancel</button>
                   </Col>
-                </FormGroup>
-                <FormGroup>
-                  <Col sm={12} md={6}>
-                    <CharacterIMG gender="M" chosen={`hvr-grow char-selected ${(this.state.chosenGender === "M") ? this.state.chosenStyle : ""}`}  toggleChosen={this.toggleChosen}/>
+                  <Col size="sm-12 md-6">
+                    <button type="submit" className="btn btn-primary btn-lg btn-block" >Register</button>
                   </Col>
-                  <Col sm={12} md={6}>
-                    <CharacterIMG gender="F" chosen={`hvr-grow char-selected ${(this.state.chosenGender === "F") ? this.state.chosenStyle : ""}`} toggleChosen={this.toggleChosen}/>
-                  </Col>
-                </FormGroup>
-                <FormGroup>
-                  <Col sm={12} md={6}>
-                    <Button bsStyle="primary" bsSize="large" onClick={this.cancel} block>Cancel</Button>
-                  </Col>
-                  <Col sm={12} md={6}>
-                    <Button bsStyle="primary" bsSize="large" type="submit" block>Register</Button>
-                  </Col>
-                </FormGroup>
-               
-              </Form>
+                </Row>
+              </div>
+            </form>
             </Col>
           </Row>
         </Container>
