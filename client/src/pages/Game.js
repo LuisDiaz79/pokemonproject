@@ -9,29 +9,29 @@ class Game extends Component {
     super(props);
     this.state = {
       oponentPokemon: {
-        name : "CHARMANDER"
+        name: "CHARMANDER"
       },
       playerPokemon: {
-        name : "BLASTOIDE"
+        name: "BLASTOIDE"
       }
     };
   }
 
 
   componentDidMount() {
-    axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-    console.log(`LOCALSTORAGE : ${localStorage.getItem('jwtToken')}`);
-    axios.get('/api/players')
-      .then(res => {
-        this.setState({ pokemons: res.data });
-        console.log(this.state.pokemons);
-      })
-      .catch((error) => {
-        console.log(error);
-        if (error.response.status === 401) {
-          this.props.history.push("/login");
-        }
-      });
+    // axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+    // console.log(`LOCALSTORAGE : ${localStorage.getItem('jwtToken')}`);
+    // axios.get('/api/players')
+    //   .then(res => {
+    //     this.setState({ pokemons: res.data });
+    //     console.log(this.state.pokemons);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     if (error.response.status === 401) {
+    //       this.props.history.push("/login");
+    //     }
+    //   });
   }
 
   logout = () => {
@@ -41,21 +41,44 @@ class Game extends Component {
 
   render() {
     return (
-      <div className="container">
-        <GameContainer oponentPokemon={this.state.oponentPokemon} playerPokemon={this.state.playerPokemon}/>
+      <div>
+        <nav className="navbar navbar-inverse">
+          <div className="container-fluid">
+            <div className="navbar-header">
+              <a className="navbar-brand" href="#">
+                <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive"/>
+              </a>  
+                        
+            </div>
+            
+            <p className="navbar-text navbar-right"><a href="#" className="navbar-link">Luisaur</a>
+            <h3 className="panel-title navbar-right">
+              {/* {
+                localStorage.getItem('jwtToken') &&
+                
+              } */}
+              <button className="btn btn-primary" onClick={this.logout}>Logout</button>
+            </h3> 
+            </p>            
+          </div>          
+        </nav>
+          
+          <div className="container">
+            <GameContainer oponentPokemon={this.state.oponentPokemon} playerPokemon={this.state.playerPokemon} />
 
 
-      <h3 className="panel-title">
-        {
-          localStorage.getItem('jwtToken') &&
-          <button className="btn btn-primary" onClick={this.logout}>Logout</button>
-        }
-      </h3>
+            {/* <h3 className="panel-title">
+              {
+                localStorage.getItem('jwtToken') &&
+                <button className="btn btn-primary" onClick={this.logout}>Logout</button>
+              }
+            </h3> */}
 
 
-      </div >
-    );
-  }
-}
-
+          </div>
+      </div>
+        );
+      }
+    }
+    
 export default Game;
