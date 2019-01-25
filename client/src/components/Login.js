@@ -32,10 +32,7 @@ class Login extends Component {
       .then((result) => {
         localStorage.setItem('jwtToken', result.data.token);
 
-        console.log(result.data);
-
         this.setState({ message: '', userInfo: result.data.userInfo[0], myPokemon : result.data.myPokemon});
-
       })
       .catch((error) => {
         
@@ -56,7 +53,7 @@ class Login extends Component {
         pathname: "/dashboard",
         state: { 
           userInfo: this.state.userInfo,
-          myPokemon : this.state.myPokemon
+          myPokeMoves : this.state.myPokemon.pokeMoves
         }
       }}/>
 

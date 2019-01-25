@@ -21,20 +21,18 @@ class Dashboard extends Component {
 
     axios.get('/api/pokemons/?apiId='+this.props.location.state.userInfo.pokemonAPIID)
       .then(res => {
-        console.log(res.data);
         this.setState({
           user : this.props.location.state.userInfo,
-          mypokemon : res.data[0]
+          mypokemon : res.data[0],
+          myPokeMoves : this.props.location.state.myPokeMoves
         });
         axios.get('/api/players')
         .then(result =>{
-          console.log(result.data);
           this.setState({players : result.data});
         })
-        .catch(err => console.log(err));
+        .catch(err => err);
       })
       .catch((error) => {
-        console.log(error);
         if (error.response.status === 401) {
           this.props.history.push("/login");
         }
@@ -56,7 +54,8 @@ class Dashboard extends Component {
         pathname: "/game",
         state: { 
           user: this.state.user,
-          playerPokemon : this.state.mypokemon
+          playerPokemon : this.state.mypokemon,
+          myPokeMoves : this.state.myPokeMoves
         }
       }}/>
 

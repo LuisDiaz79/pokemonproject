@@ -18,7 +18,7 @@ export class GameContainer extends React.Component {
                 { 
                     (!opponentPokemon || opponentPokemon.pokemonName ==="") ? console.log('out') : (
                         <div className="opponent">
-                            <StatsContainer pokemonName={opponentPokemon.pokemonName} lvl={opponentPokemon.level}/>
+                            <StatsContainer pokemonName={opponentPokemon.pokemonName} lvl={opponentPokemon.level} hp={opponentPokemon.hp}/>
                             <img className="pokemon" src={opponentPokemon.pokemonImg} alt="A sprite of charizard" />
                         </div>
                     )
@@ -27,7 +27,7 @@ export class GameContainer extends React.Component {
                     (
                         !playerPokemon || playerPokemon.pokemonName ==="") ? console.log('out') : (
                         <div className="player">
-                            <StatsContainer pokemonName={playerPokemon.name} lvl={player.level}/>
+                            <StatsContainer pokemonName={playerPokemon.name} lvl={player.level} hp={player.hp}/>
                         <img className="pokemon" src={playerPokemon.imageURL} alt="Player Pokemon" />
                     </div>
                     )
@@ -48,7 +48,7 @@ export class StatsContainer extends React.Component {
     }
 
     render() {
-        let {pokemonName, lvl} = this.props;
+        let {pokemonName, lvl, hp} = this.props;
         return (
             <div>
             {
@@ -58,7 +58,7 @@ export class StatsContainer extends React.Component {
                     <div className="top">
                         <PokeballContainer hp={this.state.hp} />
                         <div id="apHP" className="hp-count">
-                            {this.state.hp};
+                            {hp};
                         </div>
                     </div>
                     <span className="name">

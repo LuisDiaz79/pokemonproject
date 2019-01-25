@@ -10,7 +10,8 @@ class Game extends Component {
     this.state = {
       opponentPokemon: {},
       playerPokemon: {},
-      player : ""
+      player : "",
+      mypokeMoves : []
     };
   }
 
@@ -24,15 +25,18 @@ class Game extends Component {
       this.props.history.push("/login");
       return false;
     }
-    this.setState({player: this.props.location.state.user, playerPokemon : this.props.location.state.playerPokemon});
-
+    this.setState({
+      player: this.props.location.state.user, 
+      playerPokemon : this.props.location.state.playerPokemon,
+      myPokeMoves : this.props.location.state.myPokeMoves
+    });
+    
     axios.post('/api/pokemons/opponent')
       .then(res => {
-        console.log(res)
         let difficulty = (Math.floor(Math.random() * 5))-2; 
         let opponentLVL = this.state.player.level + difficulty
         if(opponentLVL<=0) opponentLVL=1;
-        let opponentHP = opponentLVL * 150;
+        let opponentHP = opponentLVL * 100;
         let opponent = {
           pokemonName : res.data.opponent.name,
           level : opponentLVL,
@@ -40,9 +44,10 @@ class Game extends Component {
           pokemonImg : res.data.opponent.animatedURL, 
           moves: this.props.location.state.pokeMoves
         }
-        this.setState({ opponentPokemon: opponent});
-        console.log(this.state.opponentPokemon);
-
+        let player = this.state.player;
+        player.hp = (this.state.player.level * 100)
+        this.setState({ opponentPokemon: opponent, player : player});
+        console.log(this.state);
       })
       .catch((error) => {
         console.log(error);
@@ -58,7 +63,7 @@ class Game extends Component {
   }
 
   render() {
-    let {player, playerPokemon, opponentPokemon} = this.state;
+    let {player, playerPokemon, opponentPokemon, myPokeMoves} = this.state;
     return (
       <div>
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -86,6 +91,20 @@ class Game extends Component {
         <div className="container">
           <GameContainer opponentPokemon={opponentPokemon} player={player} playerPokemon={playerPokemon}/>
         </div>
+        <div className="box">
+          <div id = "message" className="message">
+            What should {!this.state.playerPokemon.name ? "":this.state.playerPokemon.name} do?
+          </div>
+            <div className="actions">
+                {this.state.myPokeMoves ? this.state.myPokeMoves.map(move => {
+                    return (
+                    <button onclick = "">
+                      {move}
+                    </button>)
+                  }) : ""
+                }
+            </div>
+          </div>
       </div>
         );
       }
