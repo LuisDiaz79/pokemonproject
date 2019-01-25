@@ -45,39 +45,39 @@ router.post('/register', function (req, res) {
 
 //Create router for login or sign-in.
 
-router.post('/login', function (req, res) {
-    console.log("AUTH LOGIN.POST");
-    User.findOne({
-        username: req.body.username
-    }, function (err, user) {
-        if (err) throw err;
+// router.post('/login', function (req, res) {
+//     console.log("AUTH LOGIN.POST");
+//     User.findOne({
+//         username: req.body.username
+//     }, function (err, user) {
+//         if (err) throw err;
 
-        if (!user) {
-            res.status(401).send({ success: false, msg: 'Authentication failed. User not found.' });
-        } else {
-            // check if password matches
+//         if (!user) {
+//             res.status(401).send({ success: false, msg: 'Authentication failed. User not found.' });
+//         } else {
+//             // check if password matches
             
-            user.comparePassword(req.body.password, function (err, isMatch) {
-                if (isMatch && !err) {
-                    // if user is found and password is right create a token
-                    var token = jwt.sign(user.toJSON(), settings.secret);
-                    // return the information including token as JSON
+//             user.comparePassword(req.body.password, function (err, isMatch) {
+//                 if (isMatch && !err) {
+//                     // if user is found and password is right create a token
+//                     var token = jwt.sign(user.toJSON(), settings.secret);
+//                     // return the information including token as JSON
 
-                    // let loggedUser = playerController.findById(user.username);
+//                     // let loggedUser = playerController.findById(user.username);
                     
-                    // if(loggedUser){
-                        res.json({ success: true, token: 'JWT ' + token, username :  user.username});
-                    // }else{
-                    //     res.status(404).send({ success: false, msg: 'Authentication failed. User not found.' });
-                    // }
+//                     // if(loggedUser){
+//                         res.json({ success: true, token: 'JWT ' + token, username :  user.username});
+//                     // }else{
+//                     //     res.status(404).send({ success: false, msg: 'Authentication failed. User not found.' });
+//                     // }
                     
-                } else {
-                    res.status(401).send({ success: false, msg: 'Authentication failed. Wrong password.' });
-                }
-            });
-        }
-    });
-});
+//                 } else {
+//                     res.status(401).send({ success: false, msg: 'Authentication failed. Wrong password.' });
+//                 }
+//             });
+//         }
+//     });
+// });
 
 //Export the router variable as a module.
 
