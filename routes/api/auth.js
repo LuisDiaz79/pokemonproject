@@ -84,7 +84,7 @@ router.post('/login', function (req, res) {
                                     userInfo: userInfo,
                                     myPokemon: result.pokemon
                                 });
-                            }).catch(err => err);
+                            }).catch(err => res.status(404).send({ success: false, msg: 'Pokemon not found.' }));
 
                     } else {
                         res.status(404).send({ success: false, msg: 'Authentication failed. User not found.' });

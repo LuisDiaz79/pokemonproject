@@ -1,0 +1,112 @@
+body {
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url("https://i.kym-cdn.com/photos/images/original/001/088/791/15b.gif");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+header {
+    text-align: center;
+    font-family: "arial";
+    text-shadow: 1px 1px #FCFC01;
+    color: #294CF9;
+}
+
+header img {
+    height: 40%;
+    width: 40%;
+    margin-top: -35px;
+    margin-bottom: -35px;
+}
+
+img {
+    height: 35%;
+    width: 35%;
+}
+   
+.results {
+    height: 25%;
+    min-height: 330px;
+    background-color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    padding: 5px;
+    border-radius: 10px;
+}
+   
+.enemy {
+    height: 75%;
+    min-height: 330px;
+    background-color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+input[type = text] {
+    border: 1px solid #999;
+    border-radius: 10px;
+    width: 400px;
+    font-size: 20px;
+    margin: 5px;
+    text-align: center;
+}
+
+button[type = submit] {
+    border: 1px solid #999;
+    border-radius: 10px;
+    width: 150px;
+    font-size: 20px;
+    color: #FCFC01;
+    background-color: #294CF9;
+    margin: 5px;
+}
+   .fade {
+    opacity: 0;
+    -webkit-transition: opacity 2s linear;
+    transition: opacity 2s linear;
+}
+   
+.modal-content {
+    padding: 5px;
+    font-size: 20px;
+}
+   
+   .modal-body {
+    height: 300px;
+    width: 100%;
+}
+   
+.wrapper {
+    position: relative;
+
+}
+   
+.modalImage {
+    position: absolute;
+    opacity: 0;
+    height: 100%;
+    width: 95%;
+
+}
+   
+.bottomImg {
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+   
+.modal-content p {
+    padding-left: 20px;
+}
+   
+.modal-footer img {
+    height: 7%;
+    width: 7%;
+    float: left;
+}
+   
+.modal-footer p {
+    float: left;
+    font-size: 15px;
+}

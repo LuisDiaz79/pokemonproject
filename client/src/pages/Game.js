@@ -69,7 +69,7 @@ class Game extends Component {
     let miss = Math.floor((Math.random() * 10) + 1);
     let message = "";
     let opponentPokemon = this.state.opponentPokemon;
-    if(miss == 1){
+    if(miss === 1){
       message = `${this.state.playerPokemon.name}'s attack missed!`;
     } else{
       message = `${this.state.playerPokemon.name} used ${move}`;
