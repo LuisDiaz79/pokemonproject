@@ -12,7 +12,6 @@ export class GameContainer extends React.Component {
 
     render() {
         const {opponentPokemon, playerPokemon, player} = this.props;
-        console.log(this.props);
         return (
             <div className="game">
                 { 
@@ -56,7 +55,7 @@ export class StatsContainer extends React.Component {
                     
                 <div className="stats">
                     <div className="top">
-                        <PokeballContainer hp={this.state.hp} />
+                        <PokeballContainer hp={hp} />
                         <div id="apHP" className="hp-count">
                             {hp};
                         </div>
@@ -82,11 +81,24 @@ export class PokeballContainer extends React.Component {
         super(props);
 
         this.state = {
+            hp :0,
             pokeballs: 10
         }
     }
 
+    componentDidMount(){
+        this.setState({
+            hp: this.props.hp
+        });
+    }
+
+
     showPokeballs = () => {
+
+        // let hp = this.props.hp;
+        // let pokeball = hp % 10;
+        // console.log(pokeball);
+
         let table = []
         for (let i = 0; i < this.state.pokeballs; i++) {
             table.push( <div key={i} className="pokeball"></div>)

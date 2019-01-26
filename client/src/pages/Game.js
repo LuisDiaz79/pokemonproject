@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+import { Redirect } from 'react-router'
 import { GameContainer } from "../components/Game";
 
 class Game extends Component {
@@ -8,6 +9,9 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      message : "",
+      newGameBtn : false,
+      backBtn : false,
       opponentPokemon: {},
       playerPokemon: {},
       player : "",
@@ -46,8 +50,11 @@ class Game extends Component {
         }
         let player = this.state.player;
         player.hp = (this.state.player.level * 100)
-        this.setState({ opponentPokemon: opponent, player : player});
-        console.log(this.state);
+        this.setState({ 
+          opponentPokemon: opponent, 
+          player : player,
+          message : `What should ${!this.state.playerPokemon.name ? "":this.state.playerPokemon.name} do?`
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -57,13 +64,60 @@ class Game extends Component {
       });
   }
 
+  onClickPlayerAttack = (move) =>{
+    console.log(move);
+    let miss = Math.floor((Math.random() * 10) + 1);
+    let message = "";
+    let opponentPokemon = this.state.opponentPokemon;
+    if(miss == 1){
+      message = `${this.state.playerPokemon.name}'s attack missed!`;
+    } else{
+      message = `${this.state.playerPokemon.name} used ${move}`;
+      var critical = Math.floor((Math.random() * 10) + 1);
+      var attack = Math.floor((Math.random() * 30) + 1);
+      if(critical == 4){
+        opponentPokemon.hp = (opponentPokemon.hp - (attack*2));
+      }else{
+        opponentPokemon.hp = opponentPokemon.hp - attack;
+      }
+    }
+    if(opponentPokemon.hp <=0){
+      message = `${this.state.opponentPokemon.pokemonName} fainted`; 
+      opponentPokemon.hp = 0;
+    }
+
+    this.setState({
+      message : message,
+      opponentPokemon : opponentPokemon
+    });
+  }
   logout = () => {
     localStorage.removeItem('jwtToken');
     window.location.reload();
   }
 
   render() {
-    let {player, playerPokemon, opponentPokemon, myPokeMoves} = this.state;
+
+    if (this.state.backBtn) {
+      return   <Redirect to={{
+        pathname: "/dashboard",
+        state: { 
+          userInfo: this.state.userInfo,
+          myPokeMoves : this.state.myPokemon.pokeMoves
+        }
+      }}/>
+
+    }
+    if (this.state.newGameBtn) {
+      return   <Redirect to={{
+        pathname: "/game",
+        state: { 
+          userInfo: this.state.userInfo,
+          myPokeMoves : this.state.myPokemon.pokeMoves
+        }
+      }}/>
+    }
+    let {player, playerPokemon, opponentPokemon} = this.state;
     return (
       <div>
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -93,18 +147,26 @@ class Game extends Component {
         </div>
         <div className="box">
           <div id = "message" className="message">
-            What should {!this.state.playerPokemon.name ? "":this.state.playerPokemon.name} do?
+            {!this.state.message ? "":this.state.message}
           </div>
-            <div className="actions">
-                {this.state.myPokeMoves ? this.state.myPokeMoves.map(move => {
-                    return (
-                    <button onclick = "">
-                      {move}
-                    </button>)
-                  }) : ""
-                }
+          <div className="actions">
+            {this.state.myPokeMoves ? this.state.myPokeMoves.map(move => {
+                return (
+                <button onClick={()=> this.onClickPlayerAttack(move)}>
+                  {move}
+                </button>)
+              }) : ""
+            }
+          </div>
+        </div>
+        <div className ='row'>
+            <div className='col-sm-12 col-md-6'>
+              <button type="submit" className="btn btn-primary btn-lg btn-block" >go Back</button>
             </div>
-          </div>
+            <div className='col-sm-12 col-md-6'>
+              <button type="submit" className="btn btn-primary btn-lg btn-block" >New Game</button>
+            </div>
+        </div>
       </div>
         );
       }
