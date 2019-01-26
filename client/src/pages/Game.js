@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+import { Redirect } from 'react-router'
 import { GameContainer } from "../components/Game";
 
 class Game extends Component {
@@ -8,9 +9,13 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      message : "",
+      newGameBtn : false,
+      backBtn : false,
       opponentPokemon: {},
       playerPokemon: {},
-      player : ""
+      player : "",
+      mypokeMoves : []
     };
   }
 
@@ -24,15 +29,18 @@ class Game extends Component {
       this.props.history.push("/login");
       return false;
     }
-    this.setState({player: this.props.location.state.user, playerPokemon : this.props.location.state.playerPokemon});
-
+    this.setState({
+      player: this.props.location.state.user, 
+      playerPokemon : this.props.location.state.playerPokemon,
+      myPokeMoves : this.props.location.state.myPokeMoves
+    });
+    
     axios.post('/api/pokemons/opponent')
       .then(res => {
-        console.log(res)
         let difficulty = (Math.floor(Math.random() * 5))-2; 
         let opponentLVL = this.state.player.level + difficulty
         if(opponentLVL<=0) opponentLVL=1;
-        let opponentHP = opponentLVL * 150;
+        let opponentHP = opponentLVL * 100;
         let opponent = {
           pokemonName : res.data.opponent.name,
           level : opponentLVL,
@@ -40,9 +48,13 @@ class Game extends Component {
           pokemonImg : res.data.opponent.animatedURL, 
           moves: this.props.location.state.pokeMoves
         }
-        this.setState({ opponentPokemon: opponent});
-        console.log(this.state.opponentPokemon);
-
+        let player = this.state.player;
+        player.hp = (this.state.player.level * 100)
+        this.setState({ 
+          opponentPokemon: opponent, 
+          player : player,
+          message : `What should ${!this.state.playerPokemon.name ? "":this.state.playerPokemon.name} do?`
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -52,39 +64,109 @@ class Game extends Component {
       });
   }
 
+  onClickPlayerAttack = (move) =>{
+    console.log(move);
+    let miss = Math.floor((Math.random() * 10) + 1);
+    let message = "";
+    let opponentPokemon = this.state.opponentPokemon;
+    if(miss == 1){
+      message = `${this.state.playerPokemon.name}'s attack missed!`;
+    } else{
+      message = `${this.state.playerPokemon.name} used ${move}`;
+      var critical = Math.floor((Math.random() * 10) + 1);
+      var attack = Math.floor((Math.random() * 30) + 1);
+      if(critical == 4){
+        opponentPokemon.hp = (opponentPokemon.hp - (attack*2));
+      }else{
+        opponentPokemon.hp = opponentPokemon.hp - attack;
+      }
+    }
+    if(opponentPokemon.hp <=0){
+      message = `${this.state.opponentPokemon.pokemonName} fainted`; 
+      opponentPokemon.hp = 0;
+    }
+
+    this.setState({
+      message : message,
+      opponentPokemon : opponentPokemon
+    });
+  }
+  goBack = () => {
+    this.setState({
+      backBtn:true
+    });
+  }
   logout = () => {
     localStorage.removeItem('jwtToken');
     window.location.reload();
   }
 
   render() {
+
+    if (this.state.backBtn) {
+      return   <Redirect to={{
+        pathname: "/dashboard",
+        state: { 
+          userInfo: this.state.userInfo,
+          myPokeMoves : this.state.playerPokemon.pokeMoves
+        }
+      }}/>
+
+    }
+    if (this.state.newGameBtn) {
+      return   <Redirect to={{
+        pathname: "/game",
+        state: { 
+          userInfo: this.state.userInfo,
+          myPokeMoves : this.state.myPokemon.pokeMoves
+        }
+      }}/>
+    }
+
     let {player, playerPokemon, opponentPokemon} = this.state;
     return (
       <div>
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-          <div className="container-fluid">
-            <div className="navbar-header">
-              <a className="navbar-brand" href="#">
-                <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive"/>
-              </a>  
-                        
-            </div>
-            
-            <div className="navbar-text navbar-right">
-              <a href="#" className="navbar-link">Luisaur</a>
-              <h3 className="panel-title navbar-right">
-                {
-                  localStorage.getItem('jwtToken') &&
-                  <button className="btn btn-primary" onClick={this.logout}>Logout</button>
-                }
-                
-              </h3> 
-            </div>            
-          </div>          
+         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div className="navbar-header">
+            <a className="navbar-brand" href="#">
+              <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive" />
+            </a>
+          </div>
+          <div className="navbar-nav ml-auto">
+            <a href="#" onClick={this.goBack} className="navbar-link">{this.state.player.name}</a>
+            <h3 className="panel-title">
+              {
+                localStorage.getItem('jwtToken') &&
+                <a href="#" onClick={this.logout}>Logout</a>
+              }
+            </h3>
+          </div>
         </nav>
           
         <div className="container">
           <GameContainer opponentPokemon={opponentPokemon} player={player} playerPokemon={playerPokemon}/>
+        </div>
+        <div className="box">
+          <div id = "message" className="message">
+            {!this.state.message ? "":this.state.message}
+          </div>
+          <div className="actions">
+            {this.state.myPokeMoves ? this.state.myPokeMoves.map(move => {
+                return (
+                <button onClick={()=> this.onClickPlayerAttack(move)}>
+                  {move}
+                </button>)
+              }) : ""
+            }
+          </div>
+        </div>
+        <div className ='row'>
+            <div className='col-sm-12 col-md-6'>
+              <button type="submit" className="btn btn-primary btn-lg btn-block" >go Back</button>
+            </div>
+            <div className='col-sm-12 col-md-6'>
+              <button type="submit" className="btn btn-primary btn-lg btn-block" >New Game</button>
+            </div>
         </div>
       </div>
         );

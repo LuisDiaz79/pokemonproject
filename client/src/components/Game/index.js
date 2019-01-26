@@ -12,13 +12,12 @@ export class GameContainer extends React.Component {
 
     render() {
         const {opponentPokemon, playerPokemon, player} = this.props;
-        console.log(this.props);
         return (
             <div className="game">
                 { 
                     (!opponentPokemon || opponentPokemon.pokemonName ==="") ? console.log('out') : (
                         <div className="opponent">
-                            <StatsContainer pokemonName={opponentPokemon.pokemonName} lvl={opponentPokemon.level}/>
+                            <StatsContainer pokemonName={opponentPokemon.pokemonName} lvl={opponentPokemon.level} hp={opponentPokemon.hp}/>
                             <img className="pokemon" src={opponentPokemon.pokemonImg} alt="A sprite of charizard" />
                         </div>
                     )
@@ -27,7 +26,7 @@ export class GameContainer extends React.Component {
                     (
                         !playerPokemon || playerPokemon.pokemonName ==="") ? console.log('out') : (
                         <div className="player">
-                            <StatsContainer pokemonName={playerPokemon.name} lvl={player.level}/>
+                            <StatsContainer pokemonName={playerPokemon.name} lvl={player.level} hp={player.hp}/>
                         <img className="pokemon" src={playerPokemon.imageURL} alt="Player Pokemon" />
                     </div>
                     )
@@ -48,7 +47,7 @@ export class StatsContainer extends React.Component {
     }
 
     render() {
-        let {pokemonName, lvl} = this.props;
+        let {pokemonName, lvl, hp} = this.props;
         return (
             <div>
             {
@@ -56,9 +55,9 @@ export class StatsContainer extends React.Component {
                     
                 <div className="stats">
                     <div className="top">
-                        <PokeballContainer hp={this.state.hp} />
+                        <PokeballContainer hp={hp} />
                         <div id="apHP" className="hp-count">
-                            {this.state.hp};
+                            {hp};
                         </div>
                     </div>
                     <span className="name">
@@ -82,11 +81,24 @@ export class PokeballContainer extends React.Component {
         super(props);
 
         this.state = {
+            hp :0,
             pokeballs: 10
         }
     }
 
+    componentDidMount(){
+        this.setState({
+            hp: this.props.hp
+        });
+    }
+
+
     showPokeballs = () => {
+
+        // let hp = this.props.hp;
+        // let pokeball = hp % 10;
+        // console.log(pokeball);
+
         let table = []
         for (let i = 0; i < this.state.pokeballs; i++) {
             table.push( <div key={i} className="pokeball"></div>)
