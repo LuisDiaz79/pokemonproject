@@ -26,9 +26,10 @@ class Dashboard extends Component {
           user : this.props.location.state.userInfo,
           mypokemon : res.data[0]
         });
+        console.log(this.state.mypokemon);
         axios.get('/api/players')
         .then(result =>{
-          console.log(result.data);
+          // console.log(result.data);
           this.setState({players : result.data});
         })
         .catch(err => console.log(err));
@@ -62,7 +63,8 @@ class Dashboard extends Component {
 
     }
     return (
-      <div className="login">
+      <div >
+
         <Container>
           <Row>
             <Col size="sm-12 md-8">
