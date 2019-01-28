@@ -12,6 +12,7 @@ class Game extends Component {
       message : "",
       newGameBtn : false,
       backBtn : false,
+      endGame : false,
       opponentPokemon: {},
       playerPokemon: {},
       player : "",
@@ -46,10 +47,12 @@ class Game extends Component {
           level : opponentLVL,
           hp : opponentHP,
           pokemonImg : res.data.opponent.animatedURL, 
-          moves: this.props.location.state.pokeMoves
+          moves: this.props.location.state.pokeMoves,
+          totalhp : opponentHP
         }
         let player = this.state.player;
-        player.hp = (this.state.player.level * 100)
+        player.hp = (this.state.player.level * 100);
+        player.totalhp = (this.state.player.level * 100); 
         this.setState({ 
           opponentPokemon: opponent, 
           player : player,
@@ -59,7 +62,7 @@ class Game extends Component {
       .catch((error) => {
         console.log(error);
         if (error.response.status === 401) {
-          this.props.history.push("/login");
+          this.props.history.push("/");
         }
       });
   }
@@ -75,22 +78,40 @@ class Game extends Component {
       message = `${this.state.playerPokemon.name} used ${move}`;
       var critical = Math.floor((Math.random() * 10) + 1);
       var attack = Math.floor((Math.random() * 30) + 1);
-      if(critical == 4){
+      if(critical === 4){
         opponentPokemon.hp = (opponentPokemon.hp - (attack*2));
       }else{
         opponentPokemon.hp = opponentPokemon.hp - attack;
       }
     }
     if(opponentPokemon.hp <=0){
-      message = `${this.state.opponentPokemon.pokemonName} fainted`; 
-      opponentPokemon.hp = 0;
+      message = `${this.state.opponentPokemon.pokemonName} fainted. YOU WON!`; 
+      opponentPokemon ={
+        pokemonName : "XxxX",
+        level : 0,
+        hp : 0,
+        pokemonImg : "", 
+        moves: []
+      }
+      setTimeout(5000);
+      this.setState({
+        message : message,
+        opponentPokemon : opponentPokemon,
+        endGame : true
+      });
+    }else{
+      setTimeout(this.onOpponentAttack, 3000);
+      this.setState({
+        message : message,
+        opponentPokemon : opponentPokemon
+      });
     }
-
-    this.setState({
-      message : message,
-      opponentPokemon : opponentPokemon
-    });
+    
   }
+  onOpponentAttack = () =>{
+    console.log("OPPONENT ATTACK")
+  }
+
   logout = () => {
     localStorage.removeItem('jwtToken');
     window.location.reload();
@@ -98,16 +119,6 @@ class Game extends Component {
 
   render() {
 
-    if (this.state.backBtn) {
-      return   <Redirect to={{
-        pathname: "/dashboard",
-        state: { 
-          userInfo: this.state.userInfo,
-          myPokeMoves : this.state.myPokemon.pokeMoves
-        }
-      }}/>
-
-    }
     if (this.state.newGameBtn) {
       return   <Redirect to={{
         pathname: "/game",
@@ -123,14 +134,14 @@ class Game extends Component {
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <div className="container-fluid">
             <div className="navbar-header">
-              <a className="navbar-brand" href="#">
+              <a className="navbar-brand" >
                 <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive"/>
               </a>  
                         
             </div>
             
             <div className="navbar-text navbar-right">
-              <a href="#" className="navbar-link">Luisaur</a>
+              <a className="navbar-link">Luisaur</a>
               <h3 className="panel-title navbar-right">
                 {
                   localStorage.getItem('jwtToken') &&
@@ -152,7 +163,7 @@ class Game extends Component {
           <div className="actions">
             {this.state.myPokeMoves ? this.state.myPokeMoves.map(move => {
                 return (
-                <button onClick={()=> this.onClickPlayerAttack(move)}>
+                <button key={move} onClick={()=> this.onClickPlayerAttack(move)}>
                   {move}
                 </button>)
               }) : ""

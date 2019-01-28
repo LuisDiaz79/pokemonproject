@@ -15,11 +15,11 @@ function App() {
   return (
     <Router>
       <div>
-        <Route path='/' component={Home} />
         <Route path='/dashboard' component={Dashboard} />
         <Route path='/game' component={Game} />
         <Route path='/login' component={Login} />
         <Route path='/register' component={Register} />
+        <Route exact path='/' component={Home} />
       </div>
     </Router>
   );

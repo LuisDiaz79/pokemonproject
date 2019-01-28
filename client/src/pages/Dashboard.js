@@ -34,7 +34,7 @@ class Dashboard extends Component {
       })
       .catch((error) => {
         if (error.response.status === 401) {
-          this.props.history.push("/login");
+          this.props.history.push("/");
         }
       });
   }

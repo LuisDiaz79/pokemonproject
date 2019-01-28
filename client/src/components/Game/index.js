@@ -10,6 +10,14 @@ export class GameContainer extends React.Component {
         }
     }
 
+    componentDidMount(){
+        this.setState({
+            oponentPokemon: this.props.opponentPokemon,
+            playerPokemon: this.props.playerPokemon,
+            player: this.props.player
+        });
+    }
+
     render() {
         const {opponentPokemon, playerPokemon, player} = this.props;
         return (
@@ -17,17 +25,17 @@ export class GameContainer extends React.Component {
                 { 
                     (!opponentPokemon || opponentPokemon.pokemonName ==="") ? console.log('out') : (
                         <div className="opponent">
-                            <StatsContainer pokemonName={opponentPokemon.pokemonName} lvl={opponentPokemon.level} hp={opponentPokemon.hp}/>
+                            <StatsContainer test="TOP" pokemonName={opponentPokemon.pokemonName} lvl={opponentPokemon.level} hp={opponentPokemon.hp} totalhp={opponentPokemon.totalhp}/>
                             <img className="pokemon" src={opponentPokemon.pokemonImg} alt="A sprite of charizard" />
                         </div>
                     )
                 }
                 {
                     (
-                        !playerPokemon || playerPokemon.pokemonName ==="") ? console.log('out') : (
+                        !playerPokemon && playerPokemon.pokemonName ==="" && player.hp) ? console.log('out') : (
                         <div className="player">
-                            <StatsContainer pokemonName={playerPokemon.name} lvl={player.level} hp={player.hp}/>
-                        <img className="pokemon" src={playerPokemon.imageURL} alt="Player Pokemon" />
+                            <StatsContainer test="BOT" pokemonName={playerPokemon.name} lvl={player.level} hp={player.hp} totalhp={player.totalhp}/>
+                        <img className="pokemon" src={playerPokemon.animatedURL} alt="Player Pokemon" />
                     </div>
                     )
                 }
@@ -39,23 +47,40 @@ export class GameContainer extends React.Component {
 export class StatsContainer extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            pokemonName: "",
-            hp: 100,
-            lvl : 1
-        }
     }
+
+
+
+    showPokeballs = () => {
+
+        let totalhp = this.props.totalhp;
+        let hp = this.props.hp;
+        let pokeNum = 0;
+        if(hp !== 0 ){
+            pokeNum = totalhp/10;
+            pokeNum = hp/pokeNum;
+            pokeNum = parseInt((pokeNum === 10 )? 10:(pokeNum+1));
+        }
+        let table = []
+        for (let i = 0; i < pokeNum; i++) {
+            table.push( <div key={i} className="pokeball"></div>)
+        }
+        return table;
+    }
+
 
     render() {
         let {pokemonName, lvl, hp} = this.props;
         return (
             <div>
             {
-                (!this.props.pokemonName || this.props.pokemonName ==="")?"OUT" : (
+                (!pokemonName || pokemonName ==="")?"OUT" : (
                     
                 <div className="stats">
                     <div className="top">
-                        <PokeballContainer hp={hp} />
+                        <div className="pokeballs">
+                            {this.showPokeballs()}
+                        </div>
                         <div id="apHP" className="hp-count">
                             {hp};
                         </div>
@@ -76,41 +101,3 @@ export class StatsContainer extends React.Component {
 }
 
 
-export class PokeballContainer extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            hp :0,
-            pokeballs: 10
-        }
-    }
-
-    componentDidMount(){
-        this.setState({
-            hp: this.props.hp
-        });
-    }
-
-
-    showPokeballs = () => {
-
-        // let hp = this.props.hp;
-        // let pokeball = hp % 10;
-        // console.log(pokeball);
-
-        let table = []
-        for (let i = 0; i < this.state.pokeballs; i++) {
-            table.push( <div key={i} className="pokeball"></div>)
-        }
-        return table;
-    }
-
-    render() {
-        return (
-            <div className="pokeballs">
-                {this.showPokeballs()}
-            </div>
-        )
-    }
-}
