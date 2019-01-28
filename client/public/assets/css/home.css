@@ -20,7 +20,7 @@ header img {
     margin-bottom: -35px;
 }
 
-img {
+img1 {
     height: 35%;
     width: 35%;
 }
@@ -52,7 +52,7 @@ input[type = text] {
     text-align: center;
 }
 
-button[type = submit] {
+.button1[type = submit] {
     border: 1px solid #999;
     border-radius: 10px;
     width: 150px;
@@ -88,14 +88,8 @@ button[type = submit] {
     height: 100%;
     width: 95%;
 
-}
-   
-.bottomImg {
-    width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-   
+}   
+
 .modal-content p {
     padding-left: 20px;
 }
