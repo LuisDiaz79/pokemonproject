@@ -91,6 +91,11 @@ class Game extends Component {
       opponentPokemon : opponentPokemon
     });
   }
+  goBack = () => {
+    this.setState({
+      backBtn:true
+    });
+  }
   logout = () => {
     localStorage.removeItem('jwtToken');
     window.location.reload();
@@ -103,7 +108,7 @@ class Game extends Component {
         pathname: "/dashboard",
         state: { 
           userInfo: this.state.userInfo,
-          myPokeMoves : this.state.myPokemon.pokeMoves
+          myPokeMoves : this.state.playerPokemon.pokeMoves
         }
       }}/>
 
@@ -117,29 +122,25 @@ class Game extends Component {
         }
       }}/>
     }
+
     let {player, playerPokemon, opponentPokemon} = this.state;
     return (
       <div>
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-          <div className="container-fluid">
-            <div className="navbar-header">
-              <a className="navbar-brand" href="#">
-                <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive"/>
-              </a>  
-                        
-            </div>
-            
-            <div className="navbar-text navbar-right">
-              <a href="#" className="navbar-link">Luisaur</a>
-              <h3 className="panel-title navbar-right">
-                {
-                  localStorage.getItem('jwtToken') &&
-                  <button className="btn btn-primary" onClick={this.logout}>Logout</button>
-                }
-                
-              </h3> 
-            </div>            
-          </div>          
+         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div className="navbar-header">
+            <a className="navbar-brand" href="#">
+              <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive" />
+            </a>
+          </div>
+          <div className="navbar-nav ml-auto">
+            <a href="#" onClick={this.goBack} className="navbar-link">{this.state.player.name}</a>
+            <h3 className="panel-title">
+              {
+                localStorage.getItem('jwtToken') &&
+                <a href="#" onClick={this.logout}>Logout</a>
+              }
+            </h3>
+          </div>
         </nav>
           
         <div className="container">
