@@ -9,28 +9,28 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      newgame:"",
-      user:{},
-      mypokemon :{},
-      players : []
+      newgame: "",
+      user: {},
+      mypokemon: {},
+      players: []
     };
   }
- 
+
   componentDidMount() {
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
 
-    axios.get('/api/pokemons/?apiId='+this.props.location.state.userInfo.pokemonAPIID)
+    axios.get('/api/pokemons/?apiId=' + this.props.location.state.userInfo.pokemonAPIID)
       .then(res => {
         this.setState({
-          user : this.props.location.state.userInfo,
-          mypokemon : res.data[0],
-          myPokeMoves : this.props.location.state.myPokeMoves
+          user: this.props.location.state.userInfo,
+          mypokemon: res.data[0],
+          myPokeMoves: this.props.location.state.myPokeMoves
         });
         axios.get('/api/players')
-        .then(result =>{
-          this.setState({players : result.data});
-        })
-        .catch(err => err);
+          .then(result => {
+            this.setState({ players: result.data });
+          })
+          .catch(err => err);
       })
       .catch((error) => {
         if (error.response.status === 401) {
@@ -40,7 +40,41 @@ class Dashboard extends Component {
   }
 
   onNewGame = () => {
-    this.setState({newgame : "new"});
+    this.setState({ newgame: "new" });
+  }
+
+  logout = () => {
+    localStorage.removeItem('jwtToken');
+    window.location.reload();
+  }
+
+  componentDidMount() {
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+
+    axios.get('/api/pokemons/?apiId=' + this.props.location.state.userInfo.pokemonAPIID)
+      .then(res => {
+        this.setState({
+          user: this.props.location.state.userInfo,
+          mypokemon: res.data[0],
+          myPokeMoves: this.props.location.state.myPokeMoves
+        });
+        axios.get('/api/players')
+          .then(result => {
+            // console.log(result.data);
+            this.setState({ players: result.data });
+          })
+          .catch(err => err);
+      })
+      .catch((error) => {
+        if (error.response.status === 401) {
+          this.props.history.push("/login");
+        }
+      });
+    console.log(this.state);
+  }
+
+  onNewGame = () => {
+    this.setState({ newgame: "new" });
   }
 
   logout = () => {
@@ -49,76 +83,109 @@ class Dashboard extends Component {
   }
 
   render() {
+    console.log(this.state);
     if (this.state.newgame) {
-      return   <Redirect to={{
+      return <Redirect to={{
         pathname: "/game",
-        state: { 
+        state: {
           user: this.state.user,
-          playerPokemon : this.state.mypokemon,
-          myPokeMoves : this.state.myPokeMoves
+          playerPokemon: this.state.mypokemon,
+          myPokeMoves: this.state.myPokeMoves
         }
-      }}/>
+      }} />
 
     }
     return (
-      <div className="login">
+      <div>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div className="navbar-header">
+            <a className="navbar-brand" href="#">
+              <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive" />
+            </a>
+          </div>
+          <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div className="navbar-nav">
+              <a className="nav-item nav-link hvr-underline-reveal " href="/dashboard">Dashboard </a>
+              <a className="nav-item nav-link hvr-underline-reveal" href="#">Pokedex</a>
+              <a className="nav-item nav-link hvr-underline-reveal" href="#" onClick={this.onNewGame}>Battle</a>
+            </div>
+          </div>
+          <div className="navbar-nav ml-auto">
+            <a href="/dashboard" className="navbar-link">{this.state.user.name}</a>
+            <h3 className="panel-title">
+              {
+                localStorage.getItem('jwtToken') &&
+                <button className="btn btn-primary" onClick={this.logout}>Logout</button>
+              }
+            </h3>
+          </div>
+        </nav>
         <Container>
           <Row>
             <Col size="sm-12 md-8">
               <Row>
-              <Col size="12">
-                <h1>
-                  <img src={`./assets/images/${this.state.user.gender}.jpg`} alt="" class="userImg"/>
-                    Hi {this.state.user.name}
-                </h1>
-                <br/>
-              </Col>
-              <Col size="12">
-                <div className="card">
-                  <img src="..." class="card-img-top" alt="..."/>
-                  <div className="card-body">
-                    <h5 className="card-title">Card title</h5>
-                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <Col size="12"></Col>
+                <Col size="12">
+                  <div className="card user-info">
+                    <div className="card-header">
+                      <h1>
+                        <img src={this.state.mypokemon.imageURL} alt="" className="userImg" />
+                        {` Hi ${this.state.user.name}`}
+                      </h1>
+                    </div>
+                    <div className="card-body">
+                      <div className="title name">{`Name: ${this.state.mypokemon.name}`}</div>
+                      <div className="title gender">{`Gender: ${this.state.user.gender}`}</div>
+                      <div className="title level">{`Level: ${this.state.user.level}`}</div>
+                      <br></br>
+                      <button type="submit" className="btn btn-primary" onClick={this.onNewGame}>New Game</button>
+                    </div>
                   </div>
-                  <ul className="list-group list-group-flush">
-                    <li className="list-group-item">Cras justo odio</li>
-                    <li className="list-group-item">Dapibus ac facilisis in</li>
-                    <li className="list-group-item">Vestibulum at eros</li>
-                  </ul>
-                </div>
-                <br></br>
-              </Col>
-              <Col size="12">
-               <Row>
-                  <Col size="sm-12 md-6">
-                  </Col>
-                  <Col size="sm-12 md-6">
-                    <button type="submit" className="btn btn-primary btn-lg btn-block" onClick={this.onNewGame}>New Game</button>
-                  </Col>
-                </Row>
-              </Col>
+
+
+                </Col>
+
               </Row>
             </Col>
+
             <Col size="sm-12 md-4">
-              {this.state.players.map(player => {
-                  return (
-                    <div>
-                      {player.name}
-                    </div>
-                  )
-                })}
-              <h3 className="panel-title">
-                {
-                  localStorage.getItem('jwtToken') &&
-                  <button className="btn btn-primary" onClick={this.logout}>Logout</button>
-                }
-              </h3>
+              <div className="card">
+                <div className="card-header">
+                  Featured
+                                </div>
+                <ul className="list-group list-group-flush">
+                  {this.state.players.map(player => {
+                    return (
+                      <li className="users">
+                        {player.name}
+                        <img src={player.animatedURL} alt="" className="userImg" />
+                      </li>
+                    )
+                  })}
+
+                </ul>
+              </div>
+              {/* {this.state.players.map(player => {
+                                return (
+                                    <div>
+                                        {player.name}
+                                        <img src={this.state.mypokemon.animatedURL} alt="" className="userImg" />
+                                    </div>
+                                )
+                            })} */}
+
+              {/* <h3 className="panel-title">
+                                {
+                                    localStorage.getItem('jwtToken') &&
+                                    <button className="btn btn-primary" onClick={this.logout}>Logout</button>
+                                }
+                            </h3> */}
             </Col>
           </Row>
         </Container>
       </div>
-      
-          
+
+
     );
   }
 }

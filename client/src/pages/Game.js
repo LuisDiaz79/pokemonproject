@@ -47,9 +47,10 @@ class Game extends Component {
           level : opponentLVL,
           hp : opponentHP,
           pokemonImg : res.data.opponent.animatedURL, 
-          moves: this.props.location.state.pokeMoves,
+          moves: res.data.pokeMoves,
           totalhp : opponentHP
         }
+
         let player = this.state.player;
         player.hp = (this.state.player.level * 100);
         player.totalhp = (this.state.player.level * 100); 
@@ -93,7 +94,6 @@ class Game extends Component {
         pokemonImg : "", 
         moves: []
       }
-      setTimeout(5000);
       this.setState({
         message : message,
         opponentPokemon : opponentPokemon,
@@ -110,8 +110,64 @@ class Game extends Component {
   }
   onOpponentAttack = () =>{
     console.log("OPPONENT ATTACK")
+    let opponentPokemon = this.state.opponentPokemon;
+    let playerPokemon = this.state.playerPokemon;
+    let player = this.state.player;
+    console.log(player);
+    let message = "";
+    setTimeout(()=>{
+      this.setState({message : `${opponentPokemon.pokemonName} will attack`});
+      setTimeout(()=> {
+        let miss = Math.floor((Math.random() * 10) + 1);
+        
+        
+        if(miss === 1){
+          setTimeout(()=> {
+            this.setState({message : `${opponentPokemon.pokemonName} 's attack missed!`});  
+          }, 2000);
+        } else{
+          setTimeout(()=> {
+            
+  
+            var move = Math.floor((Math.random() * 3));
+            let opMove = opponentPokemon.moves[move];
+            this.setState({message : `${opponentPokemon.pokemonName} used ${opMove}`});  
+            var critical = Math.floor((Math.random() * 10) + 1);
+            var attack = Math.floor((Math.random() * 30) + 1);
+            if(critical === 4){
+              player.hp = (player.hp - (attack*2));
+            }else{
+              player.hp = player.hp - attack;
+            }
+
+            if(player.hp <=0){
+              message = `${this.state.player.pokemonName} fainted. YOU LOSE!`; 
+              
+              this.setState({
+                message : message,
+                endGame : true
+              });
+            }else{
+              setTimeout(()=>{
+                this.setState({
+                  message : message,
+                  player: player
+                });
+              }, 3000);
+            }
+          }, 2000);
+          
+        }      
+      }, 3000);
+    }, 2000);
+    
   }
 
+  goBack = () => {
+    this.setState({
+      backBtn:true
+    });
+  }
   logout = () => {
     localStorage.removeItem('jwtToken');
     window.location.reload();
@@ -119,6 +175,16 @@ class Game extends Component {
 
   render() {
 
+    if (this.state.backBtn) {
+      return   <Redirect to={{
+        pathname: "/dashboard",
+        state: { 
+          userInfo: this.state.userInfo,
+          myPokeMoves : this.state.playerPokemon.pokeMoves
+        }
+      }}/>
+
+    }
     if (this.state.newGameBtn) {
       return   <Redirect to={{
         pathname: "/game",
@@ -128,29 +194,25 @@ class Game extends Component {
         }
       }}/>
     }
+
     let {player, playerPokemon, opponentPokemon} = this.state;
     return (
       <div>
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-          <div className="container-fluid">
-            <div className="navbar-header">
-              <a className="navbar-brand" >
-                <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive"/>
-              </a>  
-                        
-            </div>
-            
-            <div className="navbar-text navbar-right">
-              <a className="navbar-link">Luisaur</a>
-              <h3 className="panel-title navbar-right">
-                {
-                  localStorage.getItem('jwtToken') &&
-                  <button className="btn btn-primary" onClick={this.logout}>Logout</button>
-                }
-                
-              </h3> 
-            </div>            
-          </div>          
+         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div className="navbar-header">
+            <a className="navbar-brand" href="#">
+              <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive" />
+            </a>
+          </div>
+          <div className="navbar-nav ml-auto">
+            <a href="#" onClick={this.goBack} className="navbar-link">{this.state.player.name}</a>
+            <h3 className="panel-title">
+              {
+                localStorage.getItem('jwtToken') &&
+                <a href="#" onClick={this.logout}>Logout</a>
+              }
+            </h3>
+          </div>
         </nav>
           
         <div className="container">

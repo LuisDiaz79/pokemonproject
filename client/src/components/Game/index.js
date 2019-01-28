@@ -26,7 +26,7 @@ export class GameContainer extends React.Component {
                     (!opponentPokemon || opponentPokemon.pokemonName ==="") ? console.log('out') : (
                         <div className="opponent">
                             <StatsContainer test="TOP" pokemonName={opponentPokemon.pokemonName} lvl={opponentPokemon.level} hp={opponentPokemon.hp} totalhp={opponentPokemon.totalhp}/>
-                            <img className="pokemon" src={opponentPokemon.pokemonImg} alt="A sprite of charizard" />
+                            <img className="pokemon" src={opponentPokemon.pokemonImg} alt="The pokemon ran" />
                         </div>
                     )
                 }
