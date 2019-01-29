@@ -7,6 +7,7 @@ body {
   background-size: cover;
   
   overflow-y: hidden;
+  overflow-x: hidden;
 }
 /* .container game-play{
   margin: 5px auto;
@@ -21,7 +22,7 @@ body {
   border-radius: 8px 8px 0 0;
   height: 480px;
   width: 800px;
-  margin: 0px auto;
+  margin: 20px auto;
 }
 
 .opponent {
@@ -194,22 +195,27 @@ body {
   margin-left: 10px;
 }
 
+
+/* navbar */
 .nav-link{
-  color: #fff !important;
+  color: rgba(207,207,207,1) !important;
+}
+a.text-info:focus, a.text-info:hover {
+  color: #fff!important;
 }
 .hvr-underline-reveal:before{
-  background-color: #007bff !important;
+  background-color: #da471b !important;
+ 
+}
+.btn{
+  background-color: #da471b !important;
+  border-color: #da471b !important;
+  color:#fff!important;
+}
+.btn:hover{
+  background-color: #a53716 !important;
+  border-color: #a53716 !important;
+  
 }
 
-.users{
-  display: flex;
-  justify-content: space-between;
-  /* border-bottom: 1px solid black; */
-  padding-left:25px;
-  padding-right:25px;
-  /* align-items:center; */
-}
-li.list-group-item{
-  padding:0 0 0 0  !important;
-}
-/* clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%,0 50%); */
+/*dashboard*/

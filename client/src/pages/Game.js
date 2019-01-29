@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-
+import { Link, NavLink } from 'react-router-dom';
 import { Redirect } from 'react-router'
 import { GameContainer } from "../components/Game";
 
@@ -9,13 +9,13 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      message : "",
-      newGameBtn : false,
-      backBtn : false,
+      message: "",
+      newGameBtn: false,
+      backBtn: false,
       opponentPokemon: {},
       playerPokemon: {},
-      player : "",
-      mypokeMoves : []
+      player: "",
+      mypokeMoves: []
     };
   }
 
@@ -25,35 +25,35 @@ class Game extends Component {
     // console.log(`LOCALSTORAGE : ${localStorage.getItem('jwtToken')}`);
     // console.log(`USER : ${JSON.stringify(this.props.location.state.user)}`);
     // console.log(`POKEMON : ${JSON.stringify(this.props.location.state.playerPokemon)}`);
-    if(!this.props.location.state){
+    if (!this.props.location.state) {
       this.props.history.push("/login");
       return false;
     }
     this.setState({
-      player: this.props.location.state.user, 
-      playerPokemon : this.props.location.state.playerPokemon,
-      myPokeMoves : this.props.location.state.myPokeMoves
+      player: this.props.location.state.user,
+      playerPokemon: this.props.location.state.playerPokemon,
+      myPokeMoves: this.props.location.state.myPokeMoves
     });
-    
+
     axios.post('/api/pokemons/opponent')
       .then(res => {
-        let difficulty = (Math.floor(Math.random() * 5))-2; 
+        let difficulty = (Math.floor(Math.random() * 5)) - 2;
         let opponentLVL = this.state.player.level + difficulty
-        if(opponentLVL<=0) opponentLVL=1;
+        if (opponentLVL <= 0) opponentLVL = 1;
         let opponentHP = opponentLVL * 100;
         let opponent = {
-          pokemonName : res.data.opponent.name,
-          level : opponentLVL,
-          hp : opponentHP,
-          pokemonImg : res.data.opponent.animatedURL, 
+          pokemonName: res.data.opponent.name,
+          level: opponentLVL,
+          hp: opponentHP,
+          pokemonImg: res.data.opponent.animatedURL,
           moves: this.props.location.state.pokeMoves
         }
         let player = this.state.player;
         player.hp = (this.state.player.level * 100)
-        this.setState({ 
-          opponentPokemon: opponent, 
-          player : player,
-          message : `What should ${!this.state.playerPokemon.name ? "":this.state.playerPokemon.name} do?`
+        this.setState({
+          opponentPokemon: opponent,
+          player: player,
+          message: `What should ${!this.state.playerPokemon.name ? "" : this.state.playerPokemon.name} do?`
         });
       })
       .catch((error) => {
@@ -64,36 +64,36 @@ class Game extends Component {
       });
   }
 
-  onClickPlayerAttack = (move) =>{
+  onClickPlayerAttack = (move) => {
     console.log(move);
     let miss = Math.floor((Math.random() * 10) + 1);
     let message = "";
     let opponentPokemon = this.state.opponentPokemon;
-    if(miss == 1){
+    if (miss == 1) {
       message = `${this.state.playerPokemon.name}'s attack missed!`;
-    } else{
+    } else {
       message = `${this.state.playerPokemon.name} used ${move}`;
       var critical = Math.floor((Math.random() * 10) + 1);
       var attack = Math.floor((Math.random() * 30) + 1);
-      if(critical == 4){
-        opponentPokemon.hp = (opponentPokemon.hp - (attack*2));
-      }else{
+      if (critical == 4) {
+        opponentPokemon.hp = (opponentPokemon.hp - (attack * 2));
+      } else {
         opponentPokemon.hp = opponentPokemon.hp - attack;
       }
     }
-    if(opponentPokemon.hp <=0){
-      message = `${this.state.opponentPokemon.pokemonName} fainted`; 
+    if (opponentPokemon.hp <= 0) {
+      message = `${this.state.opponentPokemon.pokemonName} fainted`;
       opponentPokemon.hp = 0;
     }
 
     this.setState({
-      message : message,
-      opponentPokemon : opponentPokemon
+      message: message,
+      opponentPokemon: opponentPokemon
     });
   }
   goBack = () => {
     this.setState({
-      backBtn:true
+      backBtn: true
     });
   }
   logout = () => {
@@ -104,73 +104,99 @@ class Game extends Component {
   render() {
 
     if (this.state.backBtn) {
-      return   <Redirect to={{
+      return <Redirect to={{
         pathname: "/dashboard",
-        state: { 
+        state: {
           userInfo: this.state.userInfo,
-          myPokeMoves : this.state.playerPokemon.pokeMoves
+          myPokeMoves: this.state.playerPokemon.pokeMoves
         }
-      }}/>
+      }} />
 
     }
     if (this.state.newGameBtn) {
-      return   <Redirect to={{
+      return <Redirect to={{
         pathname: "/game",
-        state: { 
+        state: {
           userInfo: this.state.userInfo,
-          myPokeMoves : this.state.myPokemon.pokeMoves
+          myPokeMoves: this.state.myPokemon.pokeMoves
         }
-      }}/>
+      }} />
     }
 
-    let {player, playerPokemon, opponentPokemon} = this.state;
+    let { player, playerPokemon, opponentPokemon } = this.state;
     return (
       <div>
-         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-          <div className="navbar-header">
-            <a className="navbar-brand" href="#">
-              <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive" />
-            </a>
-          </div>
-          <div className="navbar-nav ml-auto">
-            <a href="#" onClick={this.goBack} className="navbar-link">{this.state.player.name}</a>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <Link
+            className="navbar-brand"
+            to="/">
+            <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive" />
+          </Link>
+          <ul className="nav">
+            <li className="nav-item">
+              <NavLink
+                className={`nav-link text-info hvr-underline-reveal`}
+                to="/dashboard">
+                Dashboard
+          </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                className={`nav-link text-info hvr-underline-reveal`}
+                to="#">
+                Pokedex
+          </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                className={`nav-link text-info hvr-underline-reveal`}
+                to="#"
+                onClick={this.onNewGame}>Battle
+          </NavLink>
+            </li>
+          </ul>
+          <Link
+            className="navbar-nav ml-auto"
+            to="/">
+            <a href="#" onClick={this.goBack} className="navbar-link name">{this.state.player.name}</a>
             <h3 className="panel-title">
               {
                 localStorage.getItem('jwtToken') &&
-                <a href="#" onClick={this.logout}>Logout</a>
+                <button className="btn btn-warning " onClick={this.logout}>Logout</button>
               }
             </h3>
-          </div>
+          </Link>
         </nav>
-          
+       
+
         <div className="container">
-          <GameContainer opponentPokemon={opponentPokemon} player={player} playerPokemon={playerPokemon}/>
+          <GameContainer opponentPokemon={opponentPokemon} player={player} playerPokemon={playerPokemon} />
         </div>
         <div className="box">
-          <div id = "message" className="message">
-            {!this.state.message ? "":this.state.message}
+          <div id="message" className="message">
+            {!this.state.message ? "" : this.state.message}
           </div>
           <div className="actions">
             {this.state.myPokeMoves ? this.state.myPokeMoves.map(move => {
-                return (
-                <button onClick={()=> this.onClickPlayerAttack(move)}>
+              return (
+                <button onClick={() => this.onClickPlayerAttack(move)}>
                   {move}
                 </button>)
-              }) : ""
+            }) : ""
             }
           </div>
         </div>
-        <div className ='row'>
-            <div className='col-sm-12 col-md-6'>
-              <button type="submit" className="btn btn-primary btn-lg btn-block" >go Back</button>
-            </div>
-            <div className='col-sm-12 col-md-6'>
-              <button type="submit" className="btn btn-primary btn-lg btn-block" >New Game</button>
-            </div>
+        <div className='row'>
+          <div className='col-sm-12 col-md-6'>
+            <button type="submit" className="btn btn-primary btn-lg btn-block back-btn" >go Back</button>
+          </div>
+          <div className='col-sm-12 col-md-6'>
+            <button type="submit" className="btn btn-primary btn-lg btn-block new-gameBtn" >New Game</button>
+          </div>
         </div>
       </div>
-        );
-      }
-    }
-    
+    );
+  }
+}
+
 export default Game;

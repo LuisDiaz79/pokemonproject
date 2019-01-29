@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Redirect } from 'react-router'
-
+import { Redirect } from 'react-router';
+import { Link, NavLink } from 'react-router-dom';
 import { Container, Row, Col } from "../components/Grid";
 
 class Dashboard extends Component {
@@ -38,7 +38,7 @@ class Dashboard extends Component {
                     this.props.history.push("/login");
                 }
             });
-            console.log(this.state);
+        console.log(this.state);
     }
 
     onNewGame = () => {
@@ -51,7 +51,7 @@ class Dashboard extends Component {
     }
 
     render() {
-      console.log(this.state);
+        console.log(this.state);
         if (this.state.newgame) {
             return <Redirect to={{
                 pathname: "/game",
@@ -66,6 +66,49 @@ class Dashboard extends Component {
         return (
             <div>
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <Link
+                        className="navbar-brand"
+                        to="/">
+                        <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive" />
+                    </Link>
+                    <ul className="nav">
+                        <li className="nav-item">
+                            <NavLink
+                                className={`nav-link text-info hvr-underline-reveal`}
+                                to="/dashboard">
+                                Dashboard
+                             </NavLink>
+                        </li>
+                        <li className="nav-item">
+                            <NavLink
+                                className={`nav-link text-info hvr-underline-reveal`}
+                                to="#">
+                                Pokedex
+                            </NavLink>
+                        </li>
+                        <li className="nav-item">
+                            <NavLink
+                                className={`nav-link text-info hvr-underline-reveal`}
+                                to="#"
+                                onClick={this.onNewGame}>Battle
+                            </NavLink>
+                        </li>
+                    </ul>
+                    <Link
+                        className="navbar-nav ml-auto"
+                        to="/">
+                        <a href="/dashboard" className="navbar-link name">{this.state.user.name}</a>
+                        <h3 className="panel-title">
+                            {
+                                localStorage.getItem('jwtToken') &&
+                                <button className="btn btn-warning" onClick={this.logout}>Logout</button>
+                            }
+                        </h3>
+                    </Link>
+                </nav>
+
+
+                {/* <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <div className="navbar-header">
                         <a className="navbar-brand" href="#">
                             <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive" />
@@ -87,8 +130,10 @@ class Dashboard extends Component {
                             }
                         </h3>
                     </div>
-                </nav>
-                <Container>
+                </nav> */}
+
+                <Container >
+
                     <Row>
                         <Col size="sm-12 md-8">
                             <Row>
@@ -106,7 +151,7 @@ class Dashboard extends Component {
                                             <div className="title gender">{`Gender: ${this.state.user.gender}`}</div>
                                             <div className="title level">{`Level: ${this.state.user.level}`}</div>
                                             <br></br>
-                                            <button type="submit" className="btn btn-primary" onClick={this.onNewGame}>New Game</button>
+                                            <button type="submit" className="btn btn-primary btn-lg btn-block play-btn" onClick={this.onNewGame}>PLAY</button>
                                         </div>
                                     </div>
 
@@ -115,39 +160,25 @@ class Dashboard extends Component {
 
                             </Row>
                         </Col>
-                        
+
                         <Col size="sm-12 md-4">
-                            <div className="card">
+                            <div className="card user">
                                 <div className="card-header">
-                                    Featured
+                                    Users
                                 </div>
                                 <ul className="list-group list-group-flush">
-                                  {this.state.players.map(player => {
-                                return (
-                                    <li className="users">
-                                        {player.name}
-                                        <img src={player.animatedURL} alt="" className="userImg" />
-                                    </li>
-                                )
-                            })}
-                                   
+                                    {this.state.players.map(player => {
+                                        return (
+                                            <li className="users">
+                                                {player.name}
+                                                <img src={player.animatedURL} alt="" className="userImg" />
+                                            </li>
+                                        )
+                                    })}
+
                                 </ul>
                             </div>
-                            {/* {this.state.players.map(player => {
-                                return (
-                                    <div>
-                                        {player.name}
-                                        <img src={this.state.mypokemon.animatedURL} alt="" className="userImg" />
-                                    </div>
-                                )
-                            })} */}
-
-                            {/* <h3 className="panel-title">
-                                {
-                                    localStorage.getItem('jwtToken') &&
-                                    <button className="btn btn-primary" onClick={this.logout}>Logout</button>
-                                }
-                            </h3> */}
+                            
                         </Col>
                     </Row>
                 </Container>
