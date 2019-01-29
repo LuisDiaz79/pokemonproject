@@ -12,7 +12,7 @@ class Game extends Component {
       message : "",
       newGameBtn : false,
       backBtn : false,
-      endGame : false,
+      myTurn : true,
       opponentPokemon: {},
       playerPokemon: {},
       player : "",
@@ -69,7 +69,8 @@ class Game extends Component {
   }
 
   onClickPlayerAttack = (move) =>{
-    console.log(move);
+
+    this.setState({myTurn: false});
     let miss = Math.floor((Math.random() * 10) + 1);
     let message = "";
     let opponentPokemon = this.state.opponentPokemon;
@@ -94,13 +95,20 @@ class Game extends Component {
         pokemonImg : "", 
         moves: []
       }
+      let player = this.state.player;
+      let addExp = player.level * 35;
+      player.actualexp = player.actualexp + addExp;
+      player.hp = player.totalhp;
+      console.log(player);
       this.setState({
         message : message,
         opponentPokemon : opponentPokemon,
-        endGame : true
+        endGame : true,
+        player : player
       });
+      axios.post('/api/pokemons/', )
     }else{
-      setTimeout(this.onOpponentAttack, 3000);
+      setTimeout(this.onOpponentAttack, 2500);
       this.setState({
         message : message,
         opponentPokemon : opponentPokemon
@@ -109,11 +117,9 @@ class Game extends Component {
     
   }
   onOpponentAttack = () =>{
-    console.log("OPPONENT ATTACK")
     let opponentPokemon = this.state.opponentPokemon;
     let playerPokemon = this.state.playerPokemon;
     let player = this.state.player;
-    console.log(player);
     let message = "";
     setTimeout(()=>{
       this.setState({message : `${opponentPokemon.pokemonName} will attack`});
@@ -124,41 +130,55 @@ class Game extends Component {
         if(miss === 1){
           setTimeout(()=> {
             this.setState({message : `${opponentPokemon.pokemonName} 's attack missed!`});  
+            setTimeout(()=>{
+              this.setState({
+                message : `What should ${!this.state.playerPokemon.name ? "":this.state.playerPokemon.name} do?`,
+                myTurn: true
+              });
+            }, 1500);
           }, 2000);
         } else{
           setTimeout(()=> {
             
-  
+            
             var move = Math.floor((Math.random() * 3));
             let opMove = opponentPokemon.moves[move];
-            this.setState({message : `${opponentPokemon.pokemonName} used ${opMove}`});  
+            
             var critical = Math.floor((Math.random() * 10) + 1);
             var attack = Math.floor((Math.random() * 30) + 1);
             if(critical === 4){
+              this.setState({
+                message : `${opponentPokemon.pokemonName} used ${opMove}. Critical Hit!`
+              });  
               player.hp = (player.hp - (attack*2));
             }else{
+              this.setState({
+                message : `${opponentPokemon.pokemonName} used ${opMove}.`
+              });  
               player.hp = player.hp - attack;
             }
 
             if(player.hp <=0){
-              message = `${this.state.player.pokemonName} fainted. YOU LOSE!`; 
-              
+              message = `${this.state.playerPokemon.name} fainted. YOU LOSE!`; 
+              player.hp =0;
               this.setState({
                 message : message,
-                endGame : true
+                player : player,
+                myTurn: false
               });
             }else{
               setTimeout(()=>{
                 this.setState({
-                  message : message,
-                  player: player
+                  message : `What should ${!this.state.playerPokemon.name ? "":this.state.playerPokemon.name} do?`,
+                  player: player, 
+                  myTurn: true
                 });
-              }, 3000);
+              }, 2500);
             }
           }, 2000);
           
         }      
-      }, 3000);
+      }, 2500);
     }, 2000);
     
   }
@@ -223,7 +243,7 @@ class Game extends Component {
             {!this.state.message ? "":this.state.message}
           </div>
           <div className="actions">
-            {this.state.myPokeMoves ? this.state.myPokeMoves.map(move => {
+            {(this.state.myPokeMoves && this.state.myTurn)? this.state.myPokeMoves.map(move => {
                 return (
                 <button key={move} onClick={()=> this.onClickPlayerAttack(move)}>
                   {move}

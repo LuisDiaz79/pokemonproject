@@ -12,7 +12,7 @@ class CharacterIMG extends React.Component{
 
 		return(
 			<div>
-			  <img src={`./assets/images/${gender}.jpg`} alt={gender} className={chosen} onClick={() => this.props.toggleChosen(gender)}/>
+			  <img src={`./assets/images/${gender}.png`} alt={gender} className={chosen} onClick={() => this.props.toggleChosen(gender)}/>
 			</div>
 		);
 	}
