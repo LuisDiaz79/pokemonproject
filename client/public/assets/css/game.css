@@ -204,17 +204,17 @@ a.text-info:focus, a.text-info:hover {
   color: #fff!important;
 }
 .hvr-underline-reveal:before{
-  background-color: #da471b !important;
+  background-color: #ff6109 !important;
  
 }
 .btn{
-  background-color: #da471b !important;
-  border-color: #da471b !important;
+  background-color: #ff6109 !important;
+  border-color: #ff6109 !important;
   color:#fff!important;
 }
 .btn:hover{
-  background-color: #a53716 !important;
-  border-color: #a53716 !important;
+  background-color: #cf4d07 !important;
+  border-color: #cf4d07 !important;
   
 }
 

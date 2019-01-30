@@ -21,8 +21,8 @@ li.list-group-item{
   
   box-shadow: -3px 3px 8px 1px rgba(207,207,207,1);
   height: 450px;
-  border-radius: 15px;
-  margin-top: 20px
+  border-radius: 5px;
+  margin-top: 20px;
   /* width: 500px */
 }
 .container{
@@ -32,7 +32,7 @@ li.list-group-item{
   min-height: 800px;
   padding-top: 20px;
 }
-/* clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%,0 50%); */
+/* clip-path: polygon(84% 0, 100% 25%, 99% 100%, 0 100%, 0 0); */
 .play-btn{
   width: 100%;
 /* margin-left: 2%; */

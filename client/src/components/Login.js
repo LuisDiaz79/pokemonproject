@@ -61,8 +61,8 @@ class Login extends Component {
 
     const { username, password, message } = this.state;
     return (
-      <div className="login">
-
+      <div className="col-12 login">
+      
       
       <Container fluid>
         <Row>

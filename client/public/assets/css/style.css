@@ -35,6 +35,9 @@ body {
 .login{
   background-color: #101A1B;
   background: url('../images/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   /* Set up proportionate scaling */
   height: 100%;
   width: 100%;
