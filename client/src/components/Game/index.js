@@ -49,8 +49,6 @@ export class StatsContainer extends React.Component {
         super(props);
     }
 
-
-
     showPokeballs = () => {
 
         let totalhp = this.props.totalhp;

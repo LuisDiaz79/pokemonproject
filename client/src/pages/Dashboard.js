@@ -18,25 +18,52 @@ class Dashboard extends Component {
 
   componentDidMount() {
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+    this.setState({
+      user: this.props.location.state.userInfo,
+      myPokeMoves: this.props.location.state.myPokeMoves
+    });
 
-    axios.get('/api/pokemons/?apiId=' + this.props.location.state.userInfo.pokemonAPIID)
+    this.findPokemonById(this.props.location.state.userInfo.pokemonAPIID)
       .then(res => {
+        console.log(res);
         this.setState({
-          user: this.props.location.state.userInfo,
-          mypokemon: res.data[0],
-          myPokeMoves: this.props.location.state.myPokeMoves
+          mypokemon: res
         });
-        axios.get('/api/players')
-          .then(result => {
-            this.setState({ players: result.data });
-          })
-          .catch(err => err);
-      })
-      .catch((error) => {
+        this.findPlayerList()
+        .then(playersRes => {
+          let finalPlayerList = [];
+          Promise.all(playersRes.map((player)=>{
+            return (this.findPokemonById(player.pokemonAPIID)
+            .then(oppRes => {
+              console.log(oppRes);
+              player.animatedURL = oppRes.animatedURL;
+              finalPlayerList.push(player);
+            })
+          )
+          })).then(()=>{
+            this.setState({
+              players : finalPlayerList
+            });
+          });
+          
+        })
+      }).catch((error) => {
         if (error.response.status === 401) {
           this.props.history.push("/");
         }
       });
+  }
+
+  findPokemonById = (id) =>{
+    console.log("findPokemonById");
+    return axios.get('/api/pokemons/?apiId=' + id)
+    .then(res => res.data[0])
+  }
+
+  findPlayerList = () =>{
+    console.log("findPlayerList");
+    return axios.get('/api/players')
+    .then(res => res.data)
   }
 
   onNewGame = () => {
@@ -62,7 +89,7 @@ class Dashboard extends Component {
 
     }
     return (
-      <div>
+      <div >
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <div className="navbar-header">
             <a className="navbar-brand" href="#">
@@ -118,18 +145,21 @@ class Dashboard extends Component {
               <div className="card">
                 <div className="card-header">
                   Featured
-                                </div>
-                <ul className="list-group list-group-flush">
-                  {this.state.players.map(player => {
+                </div>
+                
+                  {
+                    this.state.players ? this.state.players.map(player => {
                     return (
-                      <li className="users">
-                        {player.name}
-                        <img src={player.animatedURL} alt="" className="userImg" />
-                      </li>
+                      <ul className="list-group list-group-flush">
+                        <li className="users">
+                          {player.name} <img src={player.animatedURL} alt=""/>
+                          
+                        </li>
+                      </ul>
                     )
-                  })}
+                  }) : "NO PLAYERS"
+                }
 
-                </ul>
               </div>
               {/* {this.state.players.map(player => {
                                 return (

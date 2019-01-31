@@ -98,7 +98,18 @@ class Game extends Component {
       let player = this.state.player;
       let addExp = player.level * 35;
       player.actualexp = player.actualexp + addExp;
+      if(player.actualexp>=player.exptonextlvl){
+        player.actualexp = 0;
+        player.level = player.level + 1;
+        player.exptonextlvl = player.exptonextlvl+100;
+      }
       player.hp = player.totalhp;
+      axios.post('/api/players', {player : player})
+        .then(resz =>{
+          console.log(resz)
+        })
+        .catch();
+
       console.log(player);
       this.setState({
         message : message,
@@ -106,7 +117,6 @@ class Game extends Component {
         endGame : true,
         player : player
       });
-      axios.post('/api/pokemons/', )
     }else{
       setTimeout(this.onOpponentAttack, 2500);
       this.setState({
@@ -118,7 +128,6 @@ class Game extends Component {
   }
   onOpponentAttack = () =>{
     let opponentPokemon = this.state.opponentPokemon;
-    let playerPokemon = this.state.playerPokemon;
     let player = this.state.player;
     let message = "";
     setTimeout(()=>{
@@ -135,8 +144,8 @@ class Game extends Component {
                 message : `What should ${!this.state.playerPokemon.name ? "":this.state.playerPokemon.name} do?`,
                 myTurn: true
               });
-            }, 1500);
-          }, 2000);
+            }, 1300);
+          }, 1800);
         } else{
           setTimeout(()=> {
             
@@ -173,16 +182,18 @@ class Game extends Component {
                   player: player, 
                   myTurn: true
                 });
-              }, 2500);
+              }, 2000);
             }
-          }, 2000);
+          }, 1800);
           
         }      
-      }, 2500);
-    }, 2000);
+      }, 2000);
+    }, 1800);
     
   }
-
+  newGame = ()=>{
+    window.location.reload();
+  }
   goBack = () => {
     this.setState({
       backBtn:true
@@ -253,11 +264,9 @@ class Game extends Component {
           </div>
         </div>
         <div className ='row'>
+            
             <div className='col-sm-12 col-md-6'>
-              <button type="submit" className="btn btn-primary btn-lg btn-block" >go Back</button>
-            </div>
-            <div className='col-sm-12 col-md-6'>
-              <button type="submit" className="btn btn-primary btn-lg btn-block" >New Game</button>
+              <button type="submit" className="btn btn-primary btn-lg btn-block" onClick={this.newGame} >New Game</button>
             </div>
         </div>
       </div>

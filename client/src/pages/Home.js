@@ -2,10 +2,10 @@ import React from "react";
 
 export function Home() {
   return (
-    <div>
+    <div className="home-header">
       <div id="fade">
         <header>
-          <img className ="imag1" src="/assets/images/pokemon2_logo.png"/>
+          <img className ="imag1" src="/assets/images/pokemon2_logo.png" alt=""/>
         </header>
           <section className="container">
             <center>

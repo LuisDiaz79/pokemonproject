@@ -15,7 +15,7 @@ router.route("/")
       return res.status(403).send({success: false, msg: 'Unauthorized.'});
     }
   })
-  .post(passport.authenticate('jwt', { session: false}), playersController.create);
+  .post(passport.authenticate('jwt', { session: false}), playersController.update);
 
 // Matches with "/api/books/:id"
 router
