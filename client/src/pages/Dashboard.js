@@ -161,21 +161,6 @@ class Dashboard extends Component {
                 }
 
               </div>
-              {/* {this.state.players.map(player => {
-                                return (
-                                    <div>
-                                        {player.name}
-                                        <img src={this.state.mypokemon.animatedURL} alt="" className="userImg" />
-                                    </div>
-                                )
-                            })} */}
-
-              {/* <h3 className="panel-title">
-                                {
-                                    localStorage.getItem('jwtToken') &&
-                                    <button className="btn btn-primary" onClick={this.logout}>Logout</button>
-                                }
-                            </h3> */}
             </Col>
           </Row>
         </Container>
