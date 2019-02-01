@@ -47,7 +47,7 @@ router.post('/init', function (req, res) {
         {
             apiId: 7,
             name: "Squirtle",
-            imageURL: "/pokemon/squirle.png",
+            imageURL: "/pokemon/squirtle.png",
             animatedURL: "https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif"
         }
     ];
