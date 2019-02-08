@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import { Redirect } from 'react-router'
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { Container, Row, Col } from "./Grid";
+import { getPlayerInfo } from '../redux/actions/pokemonActions';
 
 class Login extends Component {
 
+
   constructor() {
     super();
-    this.state = {
-      username: '',
-      password: '',
-      message: '',
-      userInfo: ''
-    };
+    this.state = {};
   }
+
+  componentWillReceiveProps(nextProps){
+    console.log(nextProps);
+  }
+
   onChange = (e) => {
     const state = this.state
     state[e.target.name] = e.target.value;
@@ -23,41 +25,13 @@ class Login extends Component {
   }
 
 
-  onSubmit = (e) => {
+  onSubmit = e => {
     e.preventDefault();
-
-    const { username, password } = this.state;
-
-    axios.post('/api/auth/login', { username, password })
-      .then((result) => {
-        localStorage.setItem('jwtToken', result.data.token);
-
-        this.setState({ message: '', userInfo: result.data.userInfo[0], myPokemon : result.data.myPokemon});
-      })
-      .catch((error) => {
-        
-        if (error.response.status === 401) {
-          this.setState({ message: error.response.data.msg });
-        }else if (error) {
-          
-          this.setState({ message: error.response.data.msg});
-          this.props.history.push('/register')
-        }
-      });
+    this.props.getPlayerInfo(this.state.username, this.state.password);    //connect returns 'fetchPosts()' as a prop
+    
   }
 
   render() {
-
-    if (this.state.userInfo) {
-      return   <Redirect to={{
-        pathname: "/dashboard",
-        state: { 
-          userInfo: this.state.userInfo,
-          myPokeMoves : this.state.myPokemon.pokeMoves
-        }
-      }}/>
-
-    }
 
     const { username, password, message } = this.state;
     return (
@@ -70,7 +44,7 @@ class Login extends Component {
 
         <form className="form-signin" onSubmit={this.onSubmit}>
           <h2 className="form-signin-heading">Please sign in</h2>
-            {message !== '' &&
+            { message && message !== '' &&
               <div className="alert alert-warning alert-dismissible" role="alert">
                 {message}
               </div>
@@ -98,4 +72,13 @@ class Login extends Component {
   }
 }
 
-export default Login;
+
+Login.propTypes = {     //Typechecking With PropTypes, will run on its own, no need to do anything else, separate library since React 16, wasn't the case before on 14 or 15
+  getPlayerInfo: PropTypes.func.isRequired     //Action, does the Fetch part from the posts API
+}
+
+let mapStatetoProps = (state) => ({    //rootReducer calls 'postReducer' which returns an object with previous(current) state and new data(items) onto a prop called 'posts' as we specified below
+  player: state.playerReducer      //'posts', new prop in component 'Posts'. 'state.postReducer', the object where our reducer is saved in the redux state, must have same name as the reference
+});
+
+export default connect(mapStatetoProps, { getPlayerInfo })(Login);

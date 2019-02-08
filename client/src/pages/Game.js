@@ -68,63 +68,86 @@ class Game extends Component {
       });
   }
 
+  calcAttack = ()=>{
+    let probAttack = Math.floor((Math.random() * 10) + 1);
+    let crit = false;
+    if (probAttack === 0 ){
+        return {atttack : 0, crit : crit};
+    }else{
+      var attack = Math.floor((Math.random() * 30) + (10*this.state.player.level));
+
+      if(probAttack === 9){
+        attack = attack*2;
+        crit =true;
+      }
+      return {attack : attack,  crit : crit}
+    }
+  }
+
+
   onClickPlayerAttack = (move) =>{
 
-    this.setState({myTurn: false});
-    let miss = Math.floor((Math.random() * 10) + 1);
     let message = "";
     let opponentPokemon = this.state.opponentPokemon;
-    if(miss === 1){
-      message = `${this.state.playerPokemon.name}'s attack missed!`;
-    } else{
-      message = `${this.state.playerPokemon.name} used ${move}`;
-      var critical = Math.floor((Math.random() * 10) + 1);
-      var attack = Math.floor((Math.random() * 30) + 1);
-      if(critical === 4){
-        opponentPokemon.hp = (opponentPokemon.hp - (attack*2));
-      }else{
-        opponentPokemon.hp = opponentPokemon.hp - attack;
-      }
-    }
-    if(opponentPokemon.hp <=0){
-      message = `${this.state.opponentPokemon.pokemonName} fainted. YOU WON!`; 
-      opponentPokemon ={
-        pokemonName : "XxxX",
-        level : 0,
-        hp : 0,
-        pokemonImg : "", 
-        moves: []
-      }
-      let player = this.state.player;
-      let addExp = player.level * 35;
-      player.actualexp = player.actualexp + addExp;
-      if(player.actualexp>=player.exptonextlvl){
-        player.actualexp = 0;
-        player.level = player.level + 1;
-        player.exptonextlvl = player.exptonextlvl+100;
-      }
-      player.hp = player.totalhp;
-      axios.post('/api/players', {player : player})
-        .then(resz =>{
-          console.log(resz)
-        })
-        .catch();
 
-      console.log(player);
-      this.setState({
-        message : message,
-        opponentPokemon : opponentPokemon,
-        endGame : true,
-        player : player
-      });
-    }else{
-      setTimeout(this.onOpponentAttack, 2500);
-      this.setState({
-        message : message,
-        opponentPokemon : opponentPokemon
-      });
-    }
+    this.setState({
+      myTurn: false,
+      message : `${this.state.playerPokemon.name} used ${move}`
+    });
     
+
+    setTimeout(()=>{
+      let attack = this.calcAttack();
+      if(attack.attack===0){
+        this.setState({message : `${this.state.playerPokemon.name}'s attack missed!`});
+      }else{
+        if(attack.crit){
+          this.setState({message : `${this.state.playerPokemon.name}'s attack missed!`});
+        }
+        opponentPokemon.hp = (opponentPokemon.hp - attack.attack);
+      }
+
+      if(opponentPokemon.hp <=0){
+        message = `${this.state.opponentPokemon.pokemonName} fainted. YOU WON!`; 
+        opponentPokemon ={
+          pokemonName : "XxxX",
+          level : 0,
+          hp : 0,
+          pokemonImg : "", 
+          moves: []
+        }
+        let player = this.state.player;
+        let addExp = player.level * 35;
+        player.actualexp = player.actualexp + addExp;
+        if(player.actualexp>=player.exptonextlvl){
+          player.actualexp = 0;
+          player.level = player.level + 1;
+          player.exptonextlvl = player.exptonextlvl+100;
+        }
+        player.hp = player.totalhp;
+        axios.post('/api/players', {player : player})
+          .then(resz =>{
+            console.log(resz)
+          })
+          .catch();
+  
+        console.log(player);
+        this.setState({
+          message : message,
+          opponentPokemon : opponentPokemon,
+          endGame : true,
+          player : player
+        });
+      }else{
+        setTimeout(this.onOpponentAttack, 2500);
+        this.setState({
+          message : message,
+          opponentPokemon : opponentPokemon
+        });
+      }
+
+    },1500);
+
   }
   onOpponentAttack = () =>{
     let opponentPokemon = this.state.opponentPokemon;
@@ -231,16 +254,16 @@ class Game extends Component {
       <div>
          <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <div className="navbar-header">
-            <a className="navbar-brand" href="#">
+            <a className="navbar-brand" >
               <img alt="Brand" src="/assets/images/pokemon_logo.png" className="img-responsive" />
             </a>
           </div>
           <div className="navbar-nav ml-auto">
-            <a href="#" onClick={this.goBack} className="navbar-link">{this.state.player.name}</a>
+            <a onClick={this.goBack} className="navbar-link">{this.state.player.name}</a>
             <h3 className="panel-title">
               {
                 localStorage.getItem('jwtToken') &&
-                <a href="#" onClick={this.logout}>Logout</a>
+                <a onClick={this.logout}>Logout</a>
               }
             </h3>
           </div>
