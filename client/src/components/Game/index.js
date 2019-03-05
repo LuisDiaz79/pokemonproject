@@ -32,10 +32,10 @@ export class GameContainer extends React.Component {
                 }
                 {
                     (
-                        !playerPokemon && playerPokemon.pokemonName ==="" && player.hp) ? console.log('out') : (
+                        !playerPokemon && player.name ==="" && player.hp) ? console.log('out') : (
                         <div className="player">
-                            <StatsContainer test="BOT" pokemonName={playerPokemon.name} lvl={player.level} hp={player.hp} totalhp={player.totalhp}/>
-                        <img className="pokemon" src={playerPokemon.animatedURL} alt="Player Pokemon" />
+                            <StatsContainer test="BOT" pokemonName={player.name} lvl={playerPokemon.level} hp={player.hp} totalhp={player.totalhp}/>
+                        <img className="pokemon" src={player.animatedURL} alt="Player Pokemon" />
                     </div>
                     )
                 }

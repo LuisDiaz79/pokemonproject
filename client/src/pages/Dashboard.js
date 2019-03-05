@@ -1,95 +1,55 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router'
-
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Container, Row, Col } from "../components/Grid";
+import { logout, getPlayerPokemon, getPlayerList } from '../redux/actions/pokemonActions';
 
 class Dashboard extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      newgame: "",
-      user: {},
-      mypokemon: {},
-      players: []
-    };
+    this.state = {};
   }
 
-  componentDidMount() {
-    axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-    this.setState({
-      user: this.props.location.state.userInfo,
-      myPokeMoves: this.props.location.state.myPokeMoves
-    });
+  componentWillMount() {
 
-    this.findPokemonById(this.props.location.state.userInfo.pokemonAPIID)
-      .then(res => {
-        console.log(res);
-        this.setState({
-          mypokemon: res
-        });
-        this.findPlayerList()
-        .then(playersRes => {
-          let finalPlayerList = [];
-          Promise.all(playersRes.map((player)=>{
-            return (this.findPokemonById(player.pokemonAPIID)
-            .then(oppRes => {
-              console.log(oppRes);
-              player.animatedURL = oppRes.animatedURL;
-              finalPlayerList.push(player);
-            })
-          )
-          })).then(()=>{
-            this.setState({
-              players : finalPlayerList
-            });
-          });
-          
-        })
-      }).catch((error) => {
-        if (error.response.status === 401) {
-          this.props.history.push("/");
-        }
-      });
+    if (this.props.player.logged) {
+      axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+      this.props.getPlayerList();
+      this.setState(() => ({
+        user: this.props.player.items.userInfo[0],
+        myPokeMoves: this.props.player.items.myPokemon.pokeMoves,
+        myPokemon: this.props.player.items.myPokemon
+      }));
+      this.props.getPlayerPokemon(this.props.player.items.userInfo[0].pokemonAPIID);
+      console.log(this.props.player.playerPokemon);
+    }
+
   }
 
-  findPokemonById = (id) =>{
-    console.log("findPokemonById");
-    return axios.get('/api/pokemons/?apiId=' + id)
-    .then(res => res.data[0])
-  }
-
-  findPlayerList = () =>{
-    console.log("findPlayerList");
-    return axios.get('/api/players')
-    .then(res => res.data)
-  }
 
   onNewGame = () => {
-    this.setState({ newgame: "new" });
+    <Redirect to="/game" />
   }
 
-  logout = () => {
+  onLogout = () => {
     localStorage.removeItem('jwtToken');
-    window.location.reload();
+    this.props.logout();
   }
 
   render() {
-    console.log(this.state);
-    if (this.state.newgame) {
-      return <Redirect to={{
-        pathname: "/game",
-        state: {
-          user: this.state.user,
-          playerPokemon: this.state.mypokemon,
-          myPokeMoves: this.state.myPokeMoves
-        }
-      }} />
 
-    }
+    const { player, players } = this.props
+
+    
     return (
       <div >
+        {
+          !player.logged &&
+          <Redirect to="/" />
+        }
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <div className="navbar-header">
             <a className="navbar-brand" href="#">
@@ -104,15 +64,13 @@ class Dashboard extends Component {
             </div>
           </div>
           <div className="navbar-nav ml-auto">
-            <a href="/dashboard" className="navbar-link">{this.state.user.name}</a>
+            <a href="/dashboard" className="navbar-link">{this.state.user ? this.state.user.name : ""}</a>
             <h3 className="panel-title">
-              {
-                localStorage.getItem('jwtToken') &&
-                <button className="btn btn-primary" onClick={this.logout}>Logout</button>
-              }
+              <button className="btn btn-primary" onClick={this.onLogout}>Logout</button>
             </h3>
           </div>
         </nav>
+
         <Container>
           <Row>
             <Col size="sm-12 md-8">
@@ -122,16 +80,18 @@ class Dashboard extends Component {
                   <div className="card user-info">
                     <div className="card-header">
                       <h1>
-                        <img src={this.state.mypokemon.imageURL} alt="" className="userImg" />
-                        {` Hi ${this.state.user.name}`}
+                        <img src={player.playerPokemon ? player.playerPokemon.imageURL : ""} alt="" className="userImg" />
+                        {` Hi ${this.state.user ? this.state.user.name : ""}`}
                       </h1>
                     </div>
                     <div className="card-body">
-                      <div className="title name">{`Name: ${this.state.mypokemon.name}`}</div>
-                      <div className="title gender">{`Gender: ${this.state.user.gender}`}</div>
-                      <div className="title level">{`Level: ${this.state.user.level}`}</div>
+                      <div className="title name">{`Name: ${player.playerPokemon ? player.playerPokemon.name : ""}`}</div>
+                      <div className="title gender">{`Gender: ${this.state.user ? this.state.user.gender : ""}`}</div>
+                      <div className="title level">{`Level: ${this.state.user ? this.state.user.level : ""}`}</div>
                       <br></br>
-                      <button type="submit" className="btn btn-primary" onClick={this.onNewGame}>New Game</button>
+                      <a href="/game">
+                        <button type="submit" className="btn btn-primary" >New Game</button>
+                      </a>
                     </div>
                   </div>
 
@@ -144,16 +104,16 @@ class Dashboard extends Component {
             <Col size="sm-12 md-4">
               <div className="card">
                 <div className="card-header">
-                  Featured
+                  TOP Players
                 </div>
-                
-                  {
-                    this.state.players ? this.state.players.map(player => {
+                {console.log(players)}
+                {
+                  players ? players.map(player => {
                     return (
                       <ul className="list-group list-group-flush">
                         <li className="users">
-                          {player.name} <img src={player.animatedURL} alt=""/>
-                          
+                          {player.name} <img src={player.animatedURL} alt="" />
+
                         </li>
                       </ul>
                     )
@@ -164,11 +124,22 @@ class Dashboard extends Component {
             </Col>
           </Row>
         </Container>
+
+
       </div>
-
-
     );
   }
 }
 
-export default Dashboard;
+
+Dashboard.propTypes = {     //Typechecking With PropTypes, will run on its own, no need to do anything else, separate library since React 16, wasn't the case before on 14 or 15
+  logout: PropTypes.func.isRequired,     //Action, does the Fetch part from the posts API
+  getPlayerPokemon: PropTypes.func.isRequired,     //Action, does the Fetch part from the posts API
+}
+
+let mapStatetoProps = (state) => ({    //rootReducer calls 'postReducer' which returns an object with previous(current) state and new data(items) onto a prop called 'posts' as we specified below
+  player: state.player,    //'posts', new prop in component 'Posts'. 'state.postReducer', the object where our reducer is saved in the redux state, must have same name as the reference
+  players: state.player.playersList
+});
+
+export default connect(mapStatetoProps, { logout, getPlayerPokemon, getPlayerList })(Dashboard);

@@ -13,7 +13,7 @@ export function Home() {
               <a href="https://react-pokedex.firebaseapp.com/#/">
                   <button className="button1" id='call' type="submit">Pokedex</button>
                 </a>
-                <a href="/game">
+                <a href="/login">
                   <button className="button1" id='battle' type="submit">Battle!!</button>
                 </a>
                 <br/>

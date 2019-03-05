@@ -42,6 +42,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       findPokemonByAPI(req.body.pokemonId)
           .then(data =>{
+            console.log(data);
             pokeMoves = findMoves(data);
             let pokemon = data;
             pokemon.pokeMoves = pokeMoves;

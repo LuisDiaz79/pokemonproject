@@ -1,21 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import { Container, Row, Col } from "./Grid";
-import { getPlayerInfo } from '../redux/actions/pokemonActions';
+import { getLoginInfo } from '../redux/actions/pokemonActions';
 
 class Login extends Component {
 
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {};
-  }
-
-  componentWillReceiveProps(nextProps){
-    console.log(nextProps);
   }
 
   onChange = (e) => {
@@ -24,20 +20,28 @@ class Login extends Component {
     this.setState(state);
   }
 
-
   onSubmit = e => {
     e.preventDefault();
-    this.props.getPlayerInfo(this.state.username, this.state.password);    //connect returns 'fetchPosts()' as a prop
-    
+    this.props.getLoginInfo(this.state.username, this.state.password);    //connect returns 'fetchPosts()' as a prop
+
   }
 
   render() {
 
     const { username, password, message } = this.state;
+
+    const { player } = this.props
+
+    if(player.logged ){
+      localStorage.setItem('jwtToken', player.token);
+    }
     return (
       <div className="login">
 
-      
+      {
+        player.logged &&
+        <Redirect to="/dashboard"/>
+      }
       <Container fluid>
         <Row>
         <Col size="sm-12 md-6">
@@ -74,11 +78,12 @@ class Login extends Component {
 
 
 Login.propTypes = {     //Typechecking With PropTypes, will run on its own, no need to do anything else, separate library since React 16, wasn't the case before on 14 or 15
-  getPlayerInfo: PropTypes.func.isRequired     //Action, does the Fetch part from the posts API
+  getLoginInfo: PropTypes.func.isRequired,     //Action, does the Fetch part from the posts API
+  getPlayerList: PropTypes.func.isRequired     //Action, does the Fetch part from the posts API
 }
 
 let mapStatetoProps = (state) => ({    //rootReducer calls 'postReducer' which returns an object with previous(current) state and new data(items) onto a prop called 'posts' as we specified below
-  player: state.playerReducer      //'posts', new prop in component 'Posts'. 'state.postReducer', the object where our reducer is saved in the redux state, must have same name as the reference
+  player: state.player    //'posts', new prop in component 'Posts'. 'state.postReducer', the object where our reducer is saved in the redux state, must have same name as the reference
 });
 
-export default connect(mapStatetoProps, { getPlayerInfo })(Login);
+export default connect(mapStatetoProps, { getLoginInfo})(Login);

@@ -1,1 +1,6 @@
+export const GET_LOGIN_INFO = 'GET_LOGIN_INFO';
 export const GET_PLAYER_INFO = 'GET_PLAYER_INFO';
+export const CLEAR_PLAYER_INFO = 'CLEAR_PLAYER_INFO';
+export const GET_PLAYER_LIST = 'GET_PLAYER_LIST';
+export const GET_OPPONENT = 'GET_OPPONENT';
+export const CLEAR_OPPONENT = 'CLEAR_OPPONENT';
