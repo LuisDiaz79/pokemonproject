@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom'
 import axios from 'axios';
 import { Redirect } from 'react-router'
 import PropTypes from 'prop-types';
@@ -10,7 +11,10 @@ class Dashboard extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      players : this.get
+    };
+
   }
 
   componentWillMount() {
@@ -58,9 +62,9 @@ class Dashboard extends Component {
           </div>
           <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div className="navbar-nav">
-              <a className="nav-item nav-link hvr-underline-reveal " href="/dashboard">Dashboard </a>
-              <a className="nav-item nav-link hvr-underline-reveal" href="#">Pokedex</a>
-              <a className="nav-item nav-link hvr-underline-reveal" href="#" onClick={this.onNewGame}>Battle</a>
+              <Link className="nav-item nav-link hvr-underline-reveal " to="/dashboard">Dashboard </Link>
+              <Link className="nav-item nav-link hvr-underline-reveal" to="https://react-pokedex.firebaseapp.com">Pokedex</Link>
+              <Link className="nav-item nav-link hvr-underline-reveal" to="/game" onClick={this.onNewGame}>Battle</Link>
             </div>
           </div>
           <div className="navbar-nav ml-auto">
@@ -89,9 +93,9 @@ class Dashboard extends Component {
                       <div className="title gender">{`Gender: ${this.state.user ? this.state.user.gender : ""}`}</div>
                       <div className="title level">{`Level: ${this.state.user ? this.state.user.level : ""}`}</div>
                       <br></br>
-                      <a href="/game">
+                      <Link to="/game">
                         <button type="submit" className="btn btn-primary" >New Game</button>
-                      </a>
+                      </Link>
                     </div>
                   </div>
 
@@ -106,11 +110,13 @@ class Dashboard extends Component {
                 <div className="card-header">
                   TOP Players
                 </div>
-                {console.log(players)}
+                
+                
                 {
                   players ? players.map(player => {
+                    console.log(player);
                     return (
-                      <ul className="list-group list-group-flush">
+                      <ul className="list-group list-group-flush">      
                         <li className="users">
                           {player.name} <img src={player.animatedURL} alt="" />
 
@@ -119,7 +125,7 @@ class Dashboard extends Component {
                     )
                   }) : "NO PLAYERS"
                 }
-
+                
               </div>
             </Col>
           </Row>
