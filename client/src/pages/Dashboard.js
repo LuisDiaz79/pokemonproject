@@ -63,7 +63,7 @@ class Dashboard extends Component {
           <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div className="navbar-nav">
               <Link className="nav-item nav-link hvr-underline-reveal " to="/dashboard">Dashboard </Link>
-              <Link className="nav-item nav-link hvr-underline-reveal" to="https://react-pokedex.firebaseapp.com">Pokedex</Link>
+              <a className="nav-item nav-link hvr-underline-reveal"  href="https://react-pokedex.firebaseapp.com">Pokedex</a>
               <Link className="nav-item nav-link hvr-underline-reveal" to="/game" onClick={this.onNewGame}>Battle</Link>
             </div>
           </div>
